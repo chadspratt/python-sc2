@@ -356,7 +356,7 @@ class Units(list):
         return self.subgroup(self._list_sorted_by_distance_to(position)[:n])
 
     def furthest_n_units(self, position: Union[Unit, Point2], n: int) -> Units:
-        """Returns the n furhest units in distance to position.
+        """Returns the n furthest units in distance to position.
 
         Example::
 
@@ -375,6 +375,14 @@ class Units(list):
 
     def in_distance_of_group(self, other_units: Units, distance: float) -> Units:
         """Returns units that are closer than distance from any unit in the other units object.
+
+        Example::
+
+            enemy_zerglings = self.enemy_units(UnitTypeId.ZERGLING)
+            my_marines = self.units(UnitTypeId.MARINE)
+            if my_marine:
+                zerglings_filtered = enemy_zerglings.in_distance_of_group(my_marines, 5)
+                # Contains zerglings that are within distance 5 of any of the marines
 
         :param other_units:
         :param distance:
