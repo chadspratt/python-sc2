@@ -31,3 +31,5 @@ mini_games/
 docs/
 
 .pyre
+/docs
+/examples
