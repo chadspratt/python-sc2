@@ -473,12 +473,14 @@ jobs:
     - name: Install poetry
       run: pip install poetry
 
+    - name: Set pypi token
+      run: poetry config pypi-token.pypi ${{ secrets.PYPI_PYTHON_SC2_TOKEN }}
+
     - name: Build package
         # Builds package to dist/* directory
       run: poetry build
 
     - name: Publish
-        # Publish package on pypi
       if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
       continue-on-error: true
-      run: poetry publish --username ${{ secrets.pypi_username }} --password ${{ secrets.pypi_password }}
+      run: poetry publish
