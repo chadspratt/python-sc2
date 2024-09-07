@@ -101,6 +101,7 @@ class IdGenerator:
                 abilities[key] = v["id"]
 
         abilities["SMART"] = 1
+        abilities["TERRANBUILD_REFINERYRICH"] = 325
 
         enums = {}
         enums["Units"] = units
