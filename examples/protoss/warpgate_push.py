@@ -11,7 +11,6 @@ from sc2.main import run_game
 from sc2.player import Bot, Computer
 
 
-# pylint: disable=W0231
 class WarpGateBot(BotAI):
     def __init__(self):
         # Initialize inherited class
@@ -30,7 +29,6 @@ class WarpGateBot(BotAI):
                     return
                 warpgate.warp_in(UnitTypeId.STALKER, placement)
 
-    # pylint: disable=R0912
     async def on_step(self, iteration):
         await self.distribute_workers()
 

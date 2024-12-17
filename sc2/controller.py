@@ -2,6 +2,8 @@ import platform
 from pathlib import Path
 
 from loguru import logger
+
+# pyre-ignore[21]
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 from sc2.player import Computer
@@ -15,7 +17,6 @@ class Controller(Protocol):
 
     @property
     def running(self) -> bool:
-        # pylint: disable=W0212
         return self._process._process is not None
 
     async def create_game(self, game_map, players, realtime: bool, random_seed=None, disable_fog=None):

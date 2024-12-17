@@ -1,9 +1,9 @@
+# pyre-ignore-all-errors[6, 11, 16]
 """
 This class is very experimental and probably not up to date and needs to be refurbished.
 If it works, you can watch replays with it.
 """
 
-# pylint: disable=W0201,W0212
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

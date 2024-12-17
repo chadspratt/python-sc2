@@ -1,4 +1,4 @@
-# pylint: disable=W0212
+# pyre-ignore-all-errors[11, 16, 29]
 from __future__ import annotations
 
 import math
@@ -101,7 +101,6 @@ class UnitOrder:
         return f"UnitOrder({self.ability}, {self.target}, {self.progress})"
 
 
-# pylint: disable=R0904
 class Unit:
     class_cache = CacheDict()
 
@@ -141,7 +140,7 @@ class Unit:
         return self._bot_object.game_data.units[self._proto.unit_type]
 
     @cached_property
-    def _creation_ability(self) -> AbilityData:
+    def _creation_ability(self) -> AbilityData | None:
         """Provides the AbilityData of the creation ability of this unit."""
         return self._type_data.creation_ability
 
@@ -319,7 +318,7 @@ class Unit:
         """See 'calculate_speed'."""
         return self.calculate_speed()
 
-    def calculate_speed(self, upgrades: set[UpgradeId] = None) -> float:
+    def calculate_speed(self, upgrades: set[UpgradeId] | None = None) -> float:
         """Calculates the movement speed of the unit including buffs and upgrades.
         Note: Upgrades only work with own units. Use "upgrades" param to set expected enemy upgrades.
 
@@ -602,7 +601,6 @@ class Unit:
             )
         return False
 
-    # pylint: disable=R0912,R0911
     def calculate_damage_vs_target(
         self,
         target: Unit,
@@ -1269,7 +1267,7 @@ class Unit:
     def build(
         self,
         unit: UnitTypeId,
-        position: Point2 = None,
+        position: Point2 | Unit,
         queue: bool = False,
         can_afford_check: bool = False,
     ) -> UnitCommand | bool:
@@ -1392,13 +1390,12 @@ class Unit:
         """
         return self(AbilityId.HARVEST_GATHER, target=target, queue=queue)
 
-    def return_resource(self, target: Unit = None, queue: bool = False) -> UnitCommand | bool:
-        """Orders the unit to return resource. Does not need a 'target'.
+    def return_resource(self, queue: bool = False) -> UnitCommand | bool:
+        """Orders the unit to return resource to the nearest townhall.
 
-        :param target:
         :param queue:
         """
-        return self(AbilityId.HARVEST_RETURN, target=target, queue=queue)
+        return self(AbilityId.HARVEST_RETURN, target=None, queue=queue)
 
     def move(self, position: Unit | Point2, queue: bool = False) -> UnitCommand | bool:
         """Orders the unit to move to 'position'.

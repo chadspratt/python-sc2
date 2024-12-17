@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 from collections.abc import Callable
+from pathlib import Path
 
 import numpy as np
 
@@ -106,7 +106,7 @@ class PixelMap:
 
     def save_image(self, filename: str | Path) -> None:
         data = [(0, 0, self[x, y]) for y in range(self.height) for x in range(self.width)]
-        # pylint: disable=C0415
+
         from PIL import Image
 
         im = Image.new("RGB", (self.width, self.height))
@@ -114,7 +114,6 @@ class PixelMap:
         im.save(filename)
 
     def plot(self) -> None:
-        # pylint: disable=C0415
         import matplotlib.pyplot as plt
 
         plt.imshow(self.data_numpy, origin="lower")

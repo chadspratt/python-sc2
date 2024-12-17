@@ -6,7 +6,6 @@ from sc2.ids.ability_id import AbilityId
 # from sc2.ids.buff_id import BuffId
 # from sc2.ids.effect_id import EffectId
 
-
 TRAIN_INFO: dict[UnitTypeId, dict[UnitTypeId, dict[str, AbilityId | bool | UnitTypeId]]] = {
     UnitTypeId.BARRACKS: {
         UnitTypeId.GHOST: {

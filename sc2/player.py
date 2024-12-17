@@ -1,3 +1,4 @@
+# pyre-ignore-all-errors[6, 11, 16, 29]
 from __future__ import annotations
 
 from abc import ABC
@@ -12,7 +13,7 @@ class AbstractPlayer(ABC):
         self,
         p_type: PlayerType,
         race: Race = None,
-        name: str = None,
+        name: str | None = None,
         difficulty=None,
         ai_build=None,
         fullscreen: bool = False,
@@ -148,8 +149,8 @@ class BotProcess(AbstractPlayer):
         hostaddress_arg: str = "--LadderServer",
         match_arg: str = "--StartPort",
         realtime_arg: str = "--RealTime",
-        other_args: str = None,
-        stdout: str = None,
+        other_args: str | None = None,
+        stdout: str | None = None,
     ) -> None:
         super().__init__(PlayerType.Participant, race, name=name)
         assert Path(path).exists()

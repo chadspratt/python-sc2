@@ -1,4 +1,3 @@
-# pylint: disable=R0911,W1510
 import os
 import re
 import subprocess

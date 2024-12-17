@@ -29,7 +29,6 @@ class BCRushBot(BotAI):
 
         return self.mineral_field.random.position, False
 
-    # pylint: disable=R0912
     async def on_step(self, iteration):
         ccs: Units = self.townhalls
         # If we no longer have townhalls, attack with all workers

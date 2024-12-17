@@ -16,11 +16,9 @@ from sc2.units import Units
 
 
 class RampWallBot(BotAI):
-    # pylint: disable=W0231
     def __init__(self):
         self.unit_command_uses_self_do = False
 
-    # pylint: disable=R0912
     async def on_step(self, iteration):
         ccs: Units = self.townhalls(UnitTypeId.COMMANDCENTER)
         if not ccs:

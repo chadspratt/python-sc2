@@ -1,3 +1,4 @@
+# pyre-ignore-all-errors[16]
 from __future__ import annotations
 
 from collections import defaultdict
@@ -492,6 +493,7 @@ ALL_GAS: set[UnitTypeId] = {
     UnitTypeId.EXTRACTOR,
     UnitTypeId.EXTRACTORRICH,
 }
+# pyre-ignore[11]
 DAMAGE_BONUS_PER_UPGRADE: dict[UnitTypeId, dict[TargetType, Any]] = {
     #
     # Protoss

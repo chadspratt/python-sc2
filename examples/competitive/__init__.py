@@ -1,4 +1,3 @@
-# pylint: disable=W0212
 import argparse
 import asyncio
 

@@ -1,10 +1,10 @@
-# pylint: disable=W0212
+# pyre-ignore-all-errors[14, 15, 16]
 from __future__ import annotations
 
 import random
+from collections.abc import Callable, Generator, Iterable
 from itertools import chain
 from typing import TYPE_CHECKING, Any
-from collections.abc import Callable, Generator, Iterable
 
 from sc2.ids.unit_typeid import UnitTypeId
 from sc2.position import Point2
@@ -14,14 +14,12 @@ if TYPE_CHECKING:
     from sc2.bot_ai import BotAI
 
 
-# pylint: disable=R0904
 class Units(list):
     """A collection of Unit objects. Makes it easy to select units by selectors."""
 
     @classmethod
     def from_proto(cls, units, bot_object: BotAI) -> Units:
-        # pylint: disable=E1120
-        return cls(Unit(raw_unit, bot_object=bot_object) for raw_unit in units)
+        return cls((Unit(raw_unit, bot_object=bot_object) for raw_unit in units), bot_object)
 
     def __init__(self, units: Iterable[Unit], bot_object: BotAI) -> None:
         """

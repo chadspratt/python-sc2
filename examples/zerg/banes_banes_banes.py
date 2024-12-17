@@ -23,7 +23,6 @@ class BanesBanesBanes(BotAI):
             return random.choice(self.enemy_structures).position
         return self.enemy_start_locations[0]
 
-    # pylint: disable=R0912
     async def on_step(self, iteration):
         larvae: Units = self.larva
         lings: Units = self.units(UnitTypeId.ZERGLING)

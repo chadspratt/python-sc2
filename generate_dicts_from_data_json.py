@@ -500,8 +500,6 @@ from sc2.ids.ability_id import AbilityId
 from sc2.ids.upgrade_id import UpgradeId
 # from sc2.ids.buff_id import BuffId
 # from sc2.ids.effect_id import EffectId
-
-from typing import Dict, Set, Union
     """
 
     dict_file_paths = [

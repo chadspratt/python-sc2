@@ -1,4 +1,4 @@
-# pylint: disable=W0212,R0916,R0904
+# pyre-ignore-all-errors[6, 16]
 from __future__ import annotations
 
 import math
@@ -71,6 +71,7 @@ class BotAI(BotAIInternal):
             self._last_step_step_time * 1000,
         )
 
+    # pyre-ignore[11]
     def alert(self, alert_code: Alert) -> bool:
         """
         Check if alert is triggered in the current step.
@@ -166,14 +167,16 @@ class BotAI(BotAIInternal):
         expansion_locations: dict[Point2, Units] = {pos: Units([], self) for pos in self._expansion_positions_list}
         for resource in self.resources:
             # It may be that some resources are not mapped to an expansion location
-            exp_position: Point2 = self._resource_location_to_expansion_position_dict.get(resource.position, None)
+            exp_position: Point2 | None = self._resource_location_to_expansion_position_dict.get(
+                resource.position, None
+            )
             if exp_position:
                 assert exp_position in expansion_locations
                 expansion_locations[exp_position].append(resource)
         return expansion_locations
 
     @property
-    def units_created(self) -> Counter[UnitTypeId, int]:
+    def units_created(self) -> Counter[UnitTypeId]:
         """Returns a Counter for all your units and buildings you have created so far.
 
         This may be used for statistics (at the end of the game) or for strategic decision making.
@@ -210,7 +213,10 @@ class BotAI(BotAIInternal):
         return await self.client.query_available_abilities(units, ignore_resource_requirements)
 
     async def expand_now(
-        self, building: UnitTypeId = None, max_distance: int = 10, location: Point2 | None = None
+        self,
+        building: UnitTypeId | None = None,
+        max_distance: int = 10,
+        location: Point2 | None = None,
     ) -> None:
         """Finds the next possible expansion via 'self.get_next_expansion()'. If the target expansion is blocked (e.g. an enemy unit), it will misplace the expansion.
 
@@ -218,7 +224,7 @@ class BotAI(BotAIInternal):
         :param max_distance:
         :param location:"""
 
-        if not building:
+        if building is None:
             # self.race is never Race.Random
             start_townhall_type = {
                 Race.Protoss: UnitTypeId.NEXUS,
@@ -262,7 +268,6 @@ class BotAI(BotAIInternal):
 
         return closest
 
-    # pylint: disable=R0912
     async def distribute_workers(self, resource_ratio: float = 2) -> None:
         """
         Distributes workers across all the bases taken.
@@ -322,6 +327,7 @@ class BotAI(BotAIInternal):
 
         # prepare all minerals near a base if we have too many workers
         # and need to send them to the closest patch
+        all_minerals_near_base = []
         if len(worker_pool) > len(deficit_mining_places):
             all_minerals_near_base = [
                 mineral
@@ -525,7 +531,7 @@ class BotAI(BotAIInternal):
         ability_id: AbilityId,
         target: Unit | Point2 | None = None,
         only_check_energy_and_cooldown: bool = False,
-        cached_abilities_of_unit: list[AbilityId] = None,
+        cached_abilities_of_unit: list[AbilityId] | None = None,
     ) -> bool:
         """Tests if a unit has an ability available and enough energy to cast it.
 
@@ -940,7 +946,11 @@ class BotAI(BotAIInternal):
         return True
 
     def train(
-        self, unit_type: UnitTypeId, amount: int = 1, closest_to: Point2 = None, train_only_idle_buildings: bool = True
+        self,
+        unit_type: UnitTypeId,
+        amount: int = 1,
+        closest_to: Point2 | None = None,
+        train_only_idle_buildings: bool = True,
     ) -> int:
         """Trains a specified number of units. Trains only one if amount is not specified.
         Warning: currently has issues with warp gate warp ins
@@ -996,9 +1006,7 @@ class BotAI(BotAIInternal):
         is_protoss = self.race == Race.Protoss
         is_terran = self.race == Race.Terran
         can_have_addons = any(
-            # pylint: disable=C0208
-            u in train_structure_type
-            for u in {UnitTypeId.BARRACKS, UnitTypeId.FACTORY, UnitTypeId.STARPORT}
+            u in train_structure_type for u in {UnitTypeId.BARRACKS, UnitTypeId.FACTORY, UnitTypeId.STARPORT}
         )
         # Sort structures closest to a point
         if closest_to is not None:
@@ -1043,7 +1051,10 @@ class BotAI(BotAIInternal):
                 else:
                     # Normal train a unit from larva or inside a structure
                     successfully_trained = self.do(
-                        structure.train(unit_type), subtract_cost=True, subtract_supply=True, ignore_warning=True
+                        structure.train(unit_type),
+                        subtract_cost=True,
+                        subtract_supply=True,
+                        ignore_warning=True,
                     )
                     # Check if structure has reactor: queue same unit again
                     if (
@@ -1108,8 +1119,9 @@ class BotAI(BotAIInternal):
         if not self.can_afford(upgrade_type):
             return False
 
-        research_structure_types: UnitTypeId = UPGRADE_RESEARCHED_FROM[upgrade_type]
-        required_tech_building: UnitTypeId | None = RESEARCH_INFO[research_structure_types][upgrade_type].get(
+        research_structure_type: UnitTypeId = UPGRADE_RESEARCHED_FROM[upgrade_type]
+        # pyre-ignore[9]
+        required_tech_building: UnitTypeId | None = RESEARCH_INFO[research_structure_type][upgrade_type].get(
             "required_building", None
         )
 
@@ -1132,7 +1144,7 @@ class BotAI(BotAIInternal):
         # Convert to a set, or equivalent structures are chosen
         # Overlord speed upgrade can be researched from hatchery, lair or hive
         research_structure_types: set[UnitTypeId] = equiv_structures.get(
-            research_structure_types, {research_structure_types}
+            research_structure_type, {research_structure_type}
         )
 
         structure: Unit
@@ -1149,7 +1161,9 @@ class BotAI(BotAIInternal):
             ):
                 # Can_afford check was already done earlier in this function
                 successful_action: bool = self.do(
-                    structure.research(upgrade_type), subtract_cost=True, ignore_warning=True
+                    structure.research(upgrade_type),
+                    subtract_cost=True,
+                    ignore_warning=True,
                 )
                 return successful_action
         return False
@@ -1347,6 +1361,7 @@ class BotAI(BotAIInternal):
         """
         raise NotImplementedError
 
+    # pyre-ignore[11]
     async def on_end(self, game_result: Result) -> None:
         """Override this in your bot class. This function is called at the end of a game.
         Unsure if this function will be called on the laddermanager client as the bot process may forcefully be terminated.

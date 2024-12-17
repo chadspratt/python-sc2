@@ -1,9 +1,10 @@
+# pyre-ignore-all-errors[14, 15, 58]
 from __future__ import annotations
 
 from collections import OrderedDict
+from collections.abc import Iterable
 from threading import RLock
 from typing import TYPE_CHECKING, Any
-from collections.abc import Iterable
 
 if TYPE_CHECKING:
     from sc2.bot_ai import BotAI
@@ -41,6 +42,7 @@ class ExpiringDict(OrderedDict):
 
     @property
     def frame(self) -> int:
+        # pyre-ignore[16]
         return self.bot.state.game_loop
 
     def __contains__(self, key) -> bool:

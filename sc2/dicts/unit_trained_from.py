@@ -5,7 +5,6 @@ from sc2.ids.unit_typeid import UnitTypeId
 # from sc2.ids.buff_id import BuffId
 # from sc2.ids.effect_id import EffectId
 
-
 UNIT_TRAINED_FROM: dict[UnitTypeId, set[UnitTypeId]] = {
     UnitTypeId.ADEPT: {UnitTypeId.GATEWAY, UnitTypeId.WARPGATE},
     UnitTypeId.ARMORY: {UnitTypeId.SCV},

@@ -28,7 +28,6 @@ class CyclonePush(BotAI):
         # Pick a random mineral field on the map
         return self.mineral_field.random.position
 
-    # pylint: disable=R0912
     async def on_step(self, iteration):
         CCs: Units = self.townhalls(UnitTypeId.COMMANDCENTER)
         # If no command center exists, attack-move with all workers and cyclones

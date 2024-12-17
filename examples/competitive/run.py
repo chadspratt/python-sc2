@@ -1,4 +1,3 @@
-# pylint: disable=E0401
 import sys
 
 from __init__ import run_ladder_game

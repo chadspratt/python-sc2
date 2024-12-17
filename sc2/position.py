@@ -1,11 +1,13 @@
+# pyre-ignore-all-errors[6, 14, 15, 58]
 from __future__ import annotations
 
 import itertools
 import math
 import random
-from typing import SupportsFloat, SupportsIndex, TYPE_CHECKING
 from collections.abc import Iterable
+from typing import TYPE_CHECKING, SupportsFloat, SupportsIndex
 
+# pyre-fixme[21]
 from s2clientprotocol import common_pb2 as common_pb
 
 if TYPE_CHECKING:
@@ -58,7 +60,7 @@ class Pointlike(tuple):
 
         :param ps:"""
         assert ps, "ps is empty"
-        # pylint: disable=W0108
+
         return min(ps, key=lambda p: self.distance_to(p))
 
     def distance_to_closest(self, ps: Units | Iterable[Point2]) -> float:
@@ -78,7 +80,7 @@ class Pointlike(tuple):
 
         :param ps: Units object, or iterable of Unit or Point2"""
         assert ps, "ps is empty"
-        # pylint: disable=W0108
+
         return max(ps, key=lambda p: self.distance_to(p))
 
     def distance_to_furthest(self, ps: Units | Iterable[Point2]) -> float:
@@ -138,7 +140,6 @@ class Pointlike(tuple):
         return hash(tuple(self))
 
 
-# pylint: disable=R0904
 class Point2(Pointlike):
     @classmethod
     def from_proto(cls, data) -> Point2:
@@ -148,10 +149,12 @@ class Point2(Pointlike):
         return cls((data.x, data.y))
 
     @property
+    # pyre-fixme[11]
     def as_Point2D(self) -> common_pb.Point2D:
         return common_pb.Point2D(x=self.x, y=self.y)
 
     @property
+    # pyre-fixme[11]
     def as_PointI(self) -> common_pb.PointI:
         """Represents points on the minimap. Values must be between 0 and 64."""
         return common_pb.PointI(x=self.x, y=self.y)
@@ -282,6 +285,7 @@ class Point2(Pointlike):
 
     def __mul__(self, other: int | float | Point2) -> Point2:
         try:
+            # pyre-ignore[16]
             return self.__class__((self.x * other.x, self.y * other.y))
         except AttributeError:
             return self.__class__((self.x * other, self.y * other))
@@ -327,6 +331,7 @@ class Point3(Point2):
         return cls((data.x, data.y, data.z))
 
     @property
+    # pyre-fixme[11]
     def as_Point(self) -> common_pb.Point:
         return common_pb.Point(x=self.x, y=self.y, z=self.z)
 
@@ -345,6 +350,7 @@ class Point3(Point2):
     def __add__(self, other: Point2 | Point3) -> Point3:
         if not isinstance(other, Point3) and isinstance(other, Point2):
             return Point3((self.x + other.x, self.y + other.y, self.z))
+        # pyre-ignore[16]
         return Point3((self.x + other.x, self.y + other.y, self.z + other.z))
 
 

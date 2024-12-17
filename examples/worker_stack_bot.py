@@ -28,7 +28,6 @@ from sc2.unit import Unit
 from sc2.units import Units
 
 
-# pylint: disable=W0231
 class WorkerStackBot(BotAI):
     def __init__(self):
         self.worker_to_mineral_patch_dict: dict[int, int] = {}

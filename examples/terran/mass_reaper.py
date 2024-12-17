@@ -20,13 +20,11 @@ from sc2.unit import Unit
 from sc2.units import Units
 
 
-# pylint: disable=W0231
 class MassReaperBot(BotAI):
     def __init__(self):
         # Select distance calculation method 0, which is the pure python distance calculation without caching or indexing, using math.hypot(), for more info see bot_ai_internal.py _distances_override_functions() function
         self.distance_calculation_method = 3
 
-    # pylint: disable=R0912,R0914
     async def on_step(self, iteration):
         # Benchmark and print duration time of the on_step method based on "self.distance_calculation_method" value
         # logger.info(self.time_formatted, self.supply_used, self.step_time[1])
@@ -129,7 +127,6 @@ class MassReaperBot(BotAI):
 
         # Make scvs until 22, usually you only need 1:1 mineral:gas ratio for reapers, but if you don't lose any then you will need additional depots (mule income should take care of that)
         # Stop scv production when barracks is complete but we still have a command center (priotize morphing to orbital command)
-        # pylint: disable=R0916
         if (
             self.can_afford(UnitTypeId.SCV)
             and self.supply_left > 0
@@ -186,7 +183,6 @@ class MassReaperBot(BotAI):
                 continue  # Continue for loop, dont execute any of the following
 
             # Attack is on cooldown, check if grenade is on cooldown, if not then throw it to furthest enemy in range 5
-            # pylint: disable=W0212
             reaper_grenade_range: float = self.game_data.abilities[
                 AbilityId.KD8CHARGE_KD8CHARGE.value
             ]._proto.cast_range
@@ -280,7 +276,6 @@ class MassReaperBot(BotAI):
         }
 
     # Distribute workers function rewritten, the default distribute_workers() function did not saturate gas quickly enough
-    # pylint: disable=R0912
     async def my_distribute_workers(self, performance_heavy=True, only_saturate_gas=False):
         mineral_tags = [x.tag for x in self.mineral_field]
         gas_building_tags = [x.tag for x in self.gas_buildings]

@@ -2,11 +2,13 @@ import asyncio
 import sys
 from contextlib import suppress
 
+from aiohttp.client_ws import ClientWebSocketResponse
 from loguru import logger
+
+# pyre-fixme[21]
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 from sc2.data import Status
-from aiohttp.client_ws import ClientWebSocketResponse
 
 
 class ProtocolError(Exception):
@@ -27,7 +29,8 @@ class Protocol:
         """
         assert ws
         self._ws: ClientWebSocketResponse = ws
-        self._status: Status = None
+        # pyre-fixme[11]
+        self._status: Status | None = None
 
     async def __request(self, request):
         logger.debug(f"Sending request: {request !r}")

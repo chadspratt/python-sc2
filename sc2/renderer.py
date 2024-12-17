@@ -1,5 +1,6 @@
 import datetime
 
+# pyre-ignore[21]
 from s2clientprotocol import score_pb2 as score_pb
 
 from sc2.position import Point2
@@ -36,14 +37,16 @@ class Renderer:
         minimap_pitch = -minimap_width * 3
 
         if not self._window:
-            # pylint: disable=C0415
             from pyglet.image import ImageData
             from pyglet.text import Label
             from pyglet.window import Window
 
             self._window = Window(width=map_width, height=map_height)
+            # pyre-fixme[16]
             self._window.on_mouse_press = self._on_mouse_press
+            # pyre-fixme[16]
             self._window.on_mouse_release = self._on_mouse_release
+            # pyre-fixme[16]
             self._window.on_mouse_drag = self._on_mouse_drag
             self._map_image = ImageData(map_width, map_height, "RGB", map_data, map_pitch)
             self._minimap_image = ImageData(minimap_width, minimap_height, "RGB", minimap_data, minimap_pitch)
@@ -106,7 +109,6 @@ class Renderer:
                 self._text_vespene.text = str(observation.observation.player_common.vespene)
                 self._text_minerals.text = str(observation.observation.player_common.minerals)
             if observation.observation.HasField("score"):
-                # pylint: disable=W0212
                 self._text_score.text = f"{score_pb._SCORE_SCORETYPE.values_by_number[observation.observation.score.score_type].name} score: {observation.observation.score.score}"
 
         await self._update_window()

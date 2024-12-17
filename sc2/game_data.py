@@ -1,4 +1,4 @@
-# pylint: disable=W0212
+# pyre-ignore-all-errors[29]
 from __future__ import annotations
 
 from bisect import bisect_left
@@ -48,6 +48,7 @@ class GameData:
             if not AbilityData.id_exists(unit.creation_ability.id.value):
                 continue
 
+            # pyre-ignore[16]
             if unit.creation_ability.is_free_morph:
                 continue
 
@@ -171,10 +172,12 @@ class UnitTypeData:
         return self.creation_ability._proto.footprint_radius
 
     @property
+    # pyre-ignore[11]
     def attributes(self) -> list[Attribute]:
         return self._proto.attributes
 
     def has_attribute(self, attr) -> bool:
+        # pyre-ignore[6]
         assert isinstance(attr, Attribute)
         return attr in self.attributes
 
@@ -222,6 +225,7 @@ class UnitTypeData:
         return UnitTypeId(self._proto.unit_alias)
 
     @property
+    # pyre-ignore[11]
     def race(self) -> Race:
         return Race(self._proto.race)
 
@@ -232,6 +236,7 @@ class UnitTypeData:
     @property
     def cost_zerg_corrected(self) -> Cost:
         """This returns 25 for extractor and 200 for spawning pool instead of 75 and 250 respectively"""
+        # pyre-ignore[16]
         if self.race == Race.Zerg and Attribute.Structure.value in self.attributes:
             return Cost(self._proto.mineral_cost - 50, self._proto.vespene_cost, self._proto.build_time)
         return self.cost
@@ -263,7 +268,9 @@ class UnitTypeData:
             self._game_data.units[tech_alias.value].cost.minerals for tech_alias in self.tech_alias
         )
         tech_alias_cost_vespene = max(
-            self._game_data.units[tech_alias.value].cost.vespene for tech_alias in self.tech_alias
+            self._game_data.units[tech_alias.value].cost.vespene
+            # pyre-ignore[16]
+            for tech_alias in self.tech_alias
         )
         return Cost(
             self._proto.mineral_cost - tech_alias_cost_minerals,

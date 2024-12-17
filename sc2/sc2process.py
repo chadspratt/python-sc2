@@ -14,14 +14,16 @@ from pathlib import Path
 from typing import Any
 
 import aiohttp
+
+# pyre-ignore[21]
 import portpicker
+from aiohttp.client_ws import ClientWebSocketResponse
 from loguru import logger
 
 from sc2 import paths, wsl
 from sc2.controller import Controller
 from sc2.paths import Paths
 from sc2.versions import VERSIONS
-from aiohttp.client_ws import ClientWebSocketResponse
 
 
 class KillSwitch:
@@ -36,7 +38,6 @@ class KillSwitch:
     def kill_all(cls) -> None:
         logger.info(f"kill_switch: Process cleanup for {len(cls._to_kill)} processes")
         for p in cls._to_kill:
-            # pylint: disable=W0212
             p._clean(verbose=False)
 
 
@@ -64,9 +65,9 @@ class SC2Process:
         resolution: list[int] | tuple[int, int] | None = None,
         placement: list[int] | tuple[int, int] | None = None,
         render: bool = False,
-        sc2_version: str = None,
-        base_build: str = None,
-        data_hash: str = None,
+        sc2_version: str | None = None,
+        base_build: str | None = None,
+        data_hash: str | None = None,
     ) -> None:
         assert isinstance(host, str) or host is None
         assert isinstance(port, int) or port is None
@@ -90,7 +91,7 @@ class SC2Process:
             self._port = port
         self._used_portpicker = bool(port is None)
         self._tmp_dir = tempfile.mkdtemp(prefix="SC2_")
-        self._process: subprocess = None
+        self._process: subprocess.Popen | None = None
         self._session = None
         self._ws = None
         self._sc2_version = sc2_version
@@ -237,12 +238,12 @@ class SC2Process:
         if self._session is not None:
             await self._session.close()
 
-    # pylint: disable=R0912
     def _clean(self, verbose: bool = True) -> None:
         if verbose:
             logger.info("Cleaning up...")
 
         if self._process is not None:
+            assert isinstance(self._process, subprocess.Popen)
             if paths.PF in {"WSL1", "WSL2"}:
                 if wsl.kill(self._process):
                     logger.error("KILLED")

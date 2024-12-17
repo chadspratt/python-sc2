@@ -1,4 +1,4 @@
-# pylint: disable=W0201,W0212,R0912
+# pyre-ignore-all-errors[6, 16, 29]
 from __future__ import annotations
 
 import itertools
@@ -7,12 +7,14 @@ import time
 import warnings
 from abc import ABC
 from collections import Counter
+from collections.abc import Generator, Iterable
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any, final
-from collections.abc import Generator, Iterable
 
 import numpy as np
 from loguru import logger
+
+# pyre-ignore[21]
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 from sc2.cache import property_cache_once_per_frame
@@ -40,6 +42,7 @@ from sc2.units import Units
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
+    # pyre-ignore[21]
     from scipy.spatial.distance import cdist, pdist
 
 if TYPE_CHECKING:
@@ -50,6 +53,9 @@ if TYPE_CHECKING:
 class BotAIInternal(ABC):
     """Base class for bots."""
 
+    def __init__(self) -> None:
+        self._initialize_variables()
+
     @final
     def _initialize_variables(self) -> None:
         """Called from main.py internally"""
@@ -59,7 +65,7 @@ class BotAIInternal(ABC):
         if not hasattr(self, "opponent_id"):
             # Prevent overwriting the opponent_id which is set here https://github.com/Hannessa/python-sc2-ladderbot/blob/master/__init__.py#L40
             # otherwise set it to None
-            self.opponent_id: str = None
+            self.opponent_id: str | None = None
         # Select distance calculation method, see _distances_override_functions function
         if not hasattr(self, "distance_calculation_method"):
             self.distance_calculation_method: int = 2
@@ -100,8 +106,9 @@ class BotAIInternal(ABC):
         self.warp_gate_count: int = 0
         self.actions: list[UnitCommand] = []
         self.blips: set[Blip] = set()
-        self.race: Race = None
-        self.enemy_race: Race = None
+        # pyre-ignore[11]
+        self.race: Race | None = None
+        self.enemy_race: Race | None = None
         self._generated_frame = -100
         self._units_created: Counter = Counter()
         self._unit_tags_seen_this_game: set[int] = set()
@@ -113,8 +120,8 @@ class BotAIInternal(ABC):
         self._previous_upgrades: set[UpgradeId] = set()
         self._expansion_positions_list: list[Point2] = []
         self._resource_location_to_expansion_position_dict: dict[Point2, Point2] = {}
-        self._time_before_step: float = None
-        self._time_after_step: float = None
+        self._time_before_step: float = 0
+        self._time_after_step: float = 0
         self._min_step_time: float = math.inf
         self._max_step_time: float = 0
         self._last_step_step_time: float = 0

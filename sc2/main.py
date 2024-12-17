@@ -1,4 +1,4 @@
-# pylint: disable=W0212
+# pyre-ignore-all-errors[6, 11, 16, 21, 29]
 from __future__ import annotations
 
 import asyncio
@@ -47,10 +47,10 @@ class GameMatch:
     map_sc2: Map
     players: list[AbstractPlayer]
     realtime: bool = False
-    random_seed: int = None
-    disable_fog: bool = None
-    sc2_config: list[dict] = None
-    game_time_limit: int = None
+    random_seed: int | None = None
+    disable_fog: bool | None = None
+    sc2_config: list[dict] | None = None
+    game_time_limit: int | None = None
 
     def __post_init__(self) -> None:
         # avoid players sharing names
@@ -102,11 +102,10 @@ async def _play_game_human(client, player_id, realtime, game_time_limit):
             await client.step()
 
 
-# pylint: disable=R0912,R0911,R0914
 async def _play_game_ai(
     client: Client, player_id: int, ai: BotAI, realtime: bool, game_time_limit: int | None
 ) -> Result:
-    gs: GameState = None
+    gs: GameState | None = None
 
     async def initialize_first_step() -> Result | None:
         nonlocal gs
@@ -133,7 +132,7 @@ async def _play_game_ai(
             ai._prepare_first_step()
             await ai.on_start()
         # TODO Catching too general exception Exception (broad-except)
-        # pylint: disable=W0703
+
         except Exception as e:
             logger.exception(f"Caught unknown exception in AI on_start: {e}")
             logger.error("Resigning due to previous error")
@@ -250,7 +249,7 @@ async def _play_replay(client, ai, realtime: bool = False, player_id: int = 0):
     try:
         await ai.on_start()
     # TODO Catching too general exception Exception (broad-except)
-    # pylint: disable=W0703
+
     except Exception as e:
         logger.exception(f"Caught unknown exception in AI replay on_start: {e}")
         await ai.on_end(Result.Defeat)
@@ -286,7 +285,6 @@ async def _play_replay(client, ai, realtime: bool = False, player_id: int = 0):
             await ai.on_step(iteration)
             await ai._after_step()
 
-        # pylint: disable=W0703
         # TODO Catching too general exception Exception (broad-except)
         except Exception as e:
             if isinstance(e, ProtocolError) and e.is_game_over_error:
@@ -506,9 +504,9 @@ async def play_from_websocket(
     ws_connection: str | ClientWebSocketResponse,
     player: AbstractPlayer,
     realtime: bool = False,
-    portconfig: Portconfig = None,
-    save_replay_as=None,
-    game_time_limit: int = None,
+    portconfig: Portconfig | None = None,
+    save_replay_as: str | None = None,
+    game_time_limit: int | None = None,
     should_close: bool = True,
 ):
     """Use this to play when the match is handled externally e.g. for bot ladder games.
@@ -606,8 +604,7 @@ def process_results(players: list[AbstractPlayer], async_results: list[Result]) 
     return result
 
 
-# pylint: disable=R0912
-async def maintain_SCII_count(count: int, controllers: list[Controller], proc_args: list[dict] = None) -> None:
+async def maintain_SCII_count(count: int, controllers: list[Controller], proc_args: list[dict] | None = None) -> None:
     """Modifies the given list of controllers to reflect the desired amount of SCII processes"""
     # kill unhealthy ones.
     if controllers:
@@ -647,12 +644,11 @@ async def maintain_SCII_count(count: int, controllers: list[Controller], proc_ar
         for _ in range(3):
             if platform.system() == "Linux":
                 # Works on linux: start one client after the other
-                # pylint: disable=C2801
+
                 new_controllers = [await asyncio.wait_for(sc.__aenter__(), timeout=50) for sc in extra]
             else:
                 # Doesnt seem to work on linux: starting 2 clients nearly at the same time
                 new_controllers = await asyncio.wait_for(
-                    # pylint: disable=C2801
                     asyncio.gather(*[sc.__aenter__() for sc in extra], return_exceptions=True),
                     timeout=50,
                 )
@@ -684,7 +680,8 @@ def run_multiple_games(matches: list[GameMatch]):
 
 
 # TODO Catching too general exception Exception (broad-except)
-# pylint: disable=W0703
+
+
 async def a_run_multiple_games(matches: list[GameMatch]) -> list[dict[AbstractPlayer, Result]]:
     """Run multiple matches.
     Non-python bots are supported.
@@ -715,7 +712,8 @@ async def a_run_multiple_games(matches: list[GameMatch]) -> list[dict[AbstractPl
 
 
 # TODO Catching too general exception Exception (broad-except)
-# pylint: disable=W0703
+
+
 async def a_run_multiple_games_nokill(matches: list[GameMatch]) -> list[dict[AbstractPlayer, Result]]:
     """Run multiple matches while reusing SCII processes.
     Prone to crashes and stalls

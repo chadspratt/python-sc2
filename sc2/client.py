@@ -1,9 +1,12 @@
+# pyre-ignore-all-errors[6, 9, 16, 29, 58]
 from __future__ import annotations
 
-from pathlib import Path
 from collections.abc import Iterable
+from pathlib import Path
 
 from loguru import logger
+
+# pyre-ignore[21]
 from s2clientprotocol import debug_pb2 as debug_pb
 from s2clientprotocol import query_pb2 as query_pb
 from s2clientprotocol import raw_pb2 as raw_pb
@@ -23,7 +26,6 @@ from sc2.unit import Unit
 from sc2.units import Units
 
 
-# pylint: disable=R0904
 class Client(Protocol):
     def __init__(self, ws, save_replay_path: str = None) -> None:
         """
@@ -272,7 +274,11 @@ class Client(Protocol):
         return [p.result == 1 for p in result.query.placements]
 
     async def query_building_placement(
-        self, ability: AbilityData, positions: list[Point2 | Point3], ignore_resources: bool = True
+        self,
+        ability: AbilityData,
+        positions: list[Point2 | Point3],
+        ignore_resources: bool = True,
+        # pyre-fixme[11]
     ) -> list[ActionResult]:
         """This function might be deleted in favor of the function above (_query_building_placement_fast).
 
@@ -311,6 +317,7 @@ class Client(Protocol):
         )
         """ Fix for bots that only query a single unit, may be removed soon """
         if not input_was_a_list:
+            # pyre-fixme[7]
             return [[AbilityId(a.ability_id) for a in b.abilities] for b in result.query.abilities][0]
         return [[AbilityId(a.ability_id) for a in b.abilities] for b in result.query.abilities]
 
@@ -754,6 +761,7 @@ class DrawItem:
         r = getattr(color, "r", getattr(color, "x", 255))
         g = getattr(color, "g", getattr(color, "y", 255))
         b = getattr(color, "b", getattr(color, "z", 255))
+        # pyre-ignore[20]
         if max(r, g, b) <= 1:
             r *= 255
             g *= 255

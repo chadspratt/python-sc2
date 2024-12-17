@@ -3,6 +3,7 @@ from __future__ import annotations
 from itertools import groupby
 from typing import TYPE_CHECKING
 
+# pyre-ignore[21]
 from s2clientprotocol import raw_pb2 as raw_pb
 
 from sc2.position import Point2
@@ -13,7 +14,6 @@ if TYPE_CHECKING:
     from sc2.unit_command import UnitCommand
 
 
-# pylint: disable=R0912
 def combine_actions(action_iter):
     """
     Example input:

@@ -124,7 +124,6 @@ def latest_executeble(versions_dir, base_build=None):
 class _MetaPaths(type):
     """ "Lazily loads paths to allow importing the library even if SC2 isn't installed."""
 
-    # pylint: disable=C0203
     def __setup(cls):
         if PF not in BASEDIR:
             logger.critical(f"Unsupported platform '{PF}'")
@@ -146,9 +145,7 @@ class _MetaPaths(type):
             logger.critical(f"SC2 installation not found: File '{e.filename}' does not exist.")
             sys.exit(1)
 
-    # pylint: disable=C0203
     def __getattr__(cls, attr):
-        # pylint: disable=E1120
         cls.__setup()
         return getattr(cls, attr)
 

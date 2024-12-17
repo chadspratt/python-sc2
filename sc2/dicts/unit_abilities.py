@@ -6,7 +6,6 @@ from sc2.ids.ability_id import AbilityId
 # from sc2.ids.buff_id import BuffId
 # from sc2.ids.effect_id import EffectId
 
-
 UNIT_ABILITIES: dict[UnitTypeId, set[AbilityId]] = {
     UnitTypeId.ADEPT: {
         AbilityId.ADEPTPHASESHIFT_ADEPTPHASESHIFT,
