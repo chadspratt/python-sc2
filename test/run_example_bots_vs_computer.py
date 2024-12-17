@@ -2,13 +2,14 @@
 This script makes sure to run all bots in the examples folder to check if they can launch.
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
 sys.path.append(Path(__file__).parent)
 import asyncio
 from importlib import import_module
-from typing import List, Type
 
 from loguru import logger
 
@@ -113,7 +114,7 @@ bot_infos = [
     },
 ]
 
-matches: List[GameMatch] = []
+matches: list[GameMatch] = []
 
 # Run example bots
 for bot_info in bot_infos:
@@ -121,7 +122,7 @@ for bot_info in bot_infos:
     bot_path: str = bot_info["path"]
     bot_class_name: str = bot_info["bot_class_name"]
     module = import_module(bot_path)
-    bot_class: Type[BotAI] = getattr(module, bot_class_name)
+    bot_class: type[BotAI] = getattr(module, bot_class_name)
 
     limit_match_duration = game_time_limit_vs_computer
     if bot_class_name in {"SlowBot", "RampWallBot"}:

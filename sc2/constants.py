@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Any, Dict, Set
+from typing import Any
 
 from sc2.data import Alliance, Attribute, CloakState, DisplayType, TargetType
 from sc2.ids.ability_id import AbilityId
@@ -7,7 +9,7 @@ from sc2.ids.buff_id import BuffId
 from sc2.ids.unit_typeid import UnitTypeId
 from sc2.ids.upgrade_id import UpgradeId
 
-mineral_ids: Set[int] = {
+mineral_ids: set[int] = {
     UnitTypeId.RICHMINERALFIELD.value,
     UnitTypeId.RICHMINERALFIELD750.value,
     UnitTypeId.MINERALFIELD.value,
@@ -24,7 +26,7 @@ mineral_ids: Set[int] = {
     UnitTypeId.MINERALFIELDOPAQUE.value,
     UnitTypeId.MINERALFIELDOPAQUE900.value,
 }
-geyser_ids: Set[int] = {
+geyser_ids: set[int] = {
     UnitTypeId.VESPENEGEYSER.value,
     UnitTypeId.SPACEPLATFORMGEYSER.value,
     UnitTypeId.RICHVESPENEGEYSER.value,
@@ -32,7 +34,7 @@ geyser_ids: Set[int] = {
     UnitTypeId.PURIFIERVESPENEGEYSER.value,
     UnitTypeId.SHAKURASVESPENEGEYSER.value,
 }
-transforming: Dict[UnitTypeId, AbilityId] = {
+transforming: dict[UnitTypeId, AbilityId] = {
     # Terran structures
     UnitTypeId.BARRACKS: AbilityId.LAND_BARRACKS,
     UnitTypeId.BARRACKSFLYING: AbilityId.LAND_BARRACKS,
@@ -99,7 +101,7 @@ transforming: Dict[UnitTypeId, AbilityId] = {
     UnitTypeId.ZERGLINGBURROWED: AbilityId.BURROWDOWN_ZERGLING,
 }
 # For now only contains units that cost supply, used in bot_ai.do()
-abilityid_to_unittypeid: Dict[AbilityId, UnitTypeId] = {
+abilityid_to_unittypeid: dict[AbilityId, UnitTypeId] = {
     # Protoss
     AbilityId.NEXUSTRAIN_PROBE: UnitTypeId.PROBE,
     AbilityId.GATEWAYTRAIN_ZEALOT: UnitTypeId.ZEALOT,
@@ -166,25 +168,25 @@ IS_MASSIVE: int = Attribute.Massive.value
 IS_PSIONIC: int = Attribute.Psionic.value
 UNIT_BATTLECRUISER: UnitTypeId = UnitTypeId.BATTLECRUISER
 UNIT_ORACLE: UnitTypeId = UnitTypeId.ORACLE
-TARGET_GROUND: Set[int] = {TargetType.Ground.value, TargetType.Any.value}
-TARGET_AIR: Set[int] = {TargetType.Air.value, TargetType.Any.value}
+TARGET_GROUND: set[int] = {TargetType.Ground.value, TargetType.Any.value}
+TARGET_AIR: set[int] = {TargetType.Air.value, TargetType.Any.value}
 TARGET_BOTH = TARGET_GROUND | TARGET_AIR
 IS_SNAPSHOT = DisplayType.Snapshot.value
 IS_VISIBLE = DisplayType.Visible.value
 IS_PLACEHOLDER = DisplayType.Placeholder.value
 IS_MINE = Alliance.Self.value
 IS_ENEMY = Alliance.Enemy.value
-IS_CLOAKED: Set[int] = {CloakState.Cloaked.value, CloakState.CloakedDetected.value, CloakState.CloakedAllied.value}
+IS_CLOAKED: set[int] = {CloakState.Cloaked.value, CloakState.CloakedDetected.value, CloakState.CloakedAllied.value}
 IS_REVEALED: int = CloakState.CloakedDetected.value
-CAN_BE_ATTACKED: Set[int] = {CloakState.NotCloaked.value, CloakState.CloakedDetected.value}
-IS_CARRYING_MINERALS: Set[BuffId] = {BuffId.CARRYMINERALFIELDMINERALS, BuffId.CARRYHIGHYIELDMINERALFIELDMINERALS}
-IS_CARRYING_VESPENE: Set[BuffId] = {
+CAN_BE_ATTACKED: set[int] = {CloakState.NotCloaked.value, CloakState.CloakedDetected.value}
+IS_CARRYING_MINERALS: set[BuffId] = {BuffId.CARRYMINERALFIELDMINERALS, BuffId.CARRYHIGHYIELDMINERALFIELDMINERALS}
+IS_CARRYING_VESPENE: set[BuffId] = {
     BuffId.CARRYHARVESTABLEVESPENEGEYSERGAS,
     BuffId.CARRYHARVESTABLEVESPENEGEYSERGASPROTOSS,
     BuffId.CARRYHARVESTABLEVESPENEGEYSERGASZERG,
 }
-IS_CARRYING_RESOURCES: Set[BuffId] = IS_CARRYING_MINERALS | IS_CARRYING_VESPENE
-IS_ATTACKING: Set[AbilityId] = {
+IS_CARRYING_RESOURCES: set[BuffId] = IS_CARRYING_MINERALS | IS_CARRYING_VESPENE
+IS_ATTACKING: set[AbilityId] = {
     AbilityId.ATTACK,
     AbilityId.ATTACK_ATTACK,
     AbilityId.ATTACK_ATTACKTOWARDS,
@@ -194,8 +196,8 @@ IS_ATTACKING: Set[AbilityId] = {
 IS_PATROLLING: AbilityId = AbilityId.PATROL_PATROL
 IS_GATHERING: AbilityId = AbilityId.HARVEST_GATHER
 IS_RETURNING: AbilityId = AbilityId.HARVEST_RETURN
-IS_COLLECTING: Set[AbilityId] = {IS_GATHERING, IS_RETURNING}
-IS_CONSTRUCTING_SCV: Set[AbilityId] = {
+IS_COLLECTING: set[AbilityId] = {IS_GATHERING, IS_RETURNING}
+IS_CONSTRUCTING_SCV: set[AbilityId] = {
     AbilityId.TERRANBUILD_ARMORY,
     AbilityId.TERRANBUILD_BARRACKS,
     AbilityId.TERRANBUILD_BUNKER,
@@ -210,8 +212,8 @@ IS_CONSTRUCTING_SCV: Set[AbilityId] = {
     AbilityId.TERRANBUILD_STARPORT,
     AbilityId.TERRANBUILD_SUPPLYDEPOT,
 }
-IS_REPAIRING: Set[AbilityId] = {AbilityId.EFFECT_REPAIR, AbilityId.EFFECT_REPAIR_MULE, AbilityId.EFFECT_REPAIR_SCV}
-IS_DETECTOR: Set[UnitTypeId] = {
+IS_REPAIRING: set[AbilityId] = {AbilityId.EFFECT_REPAIR, AbilityId.EFFECT_REPAIR_MULE, AbilityId.EFFECT_REPAIR_SCV}
+IS_DETECTOR: set[UnitTypeId] = {
     UnitTypeId.OBSERVER,
     UnitTypeId.OBSERVERSIEGEMODE,
     UnitTypeId.RAVEN,
@@ -220,7 +222,7 @@ IS_DETECTOR: Set[UnitTypeId] = {
     UnitTypeId.OVERSEERSIEGEMODE,
     UnitTypeId.SPORECRAWLER,
 }
-SPEED_UPGRADE_DICT: Dict[UnitTypeId, UpgradeId] = {
+SPEED_UPGRADE_DICT: dict[UnitTypeId, UpgradeId] = {
     # Terran
     UnitTypeId.MEDIVAC: UpgradeId.MEDIVACRAPIDDEPLOYMENT,
     UnitTypeId.BANSHEE: UpgradeId.BANSHEESPEED,
@@ -237,7 +239,7 @@ SPEED_UPGRADE_DICT: Dict[UnitTypeId, UpgradeId] = {
     UnitTypeId.ROACH: UpgradeId.GLIALRECONSTITUTION,
     UnitTypeId.LURKERMP: UpgradeId.DIGGINGCLAWS,
 }
-SPEED_INCREASE_DICT: Dict[UnitTypeId, float] = {
+SPEED_INCREASE_DICT: dict[UnitTypeId, float] = {
     # Terran
     UnitTypeId.MEDIVAC: 1.18,
     UnitTypeId.BANSHEE: 1.3636,
@@ -259,7 +261,7 @@ temp2 = set(SPEED_INCREASE_DICT)
 assert temp1 == temp2, f"{temp1.symmetric_difference(temp2)}"
 del temp1
 del temp2
-SPEED_INCREASE_ON_CREEP_DICT: Dict[UnitTypeId, float] = {
+SPEED_INCREASE_ON_CREEP_DICT: dict[UnitTypeId, float] = {
     UnitTypeId.QUEEN: 2.67,
     UnitTypeId.ZERGLING: 1.3,
     UnitTypeId.BANELING: 1.3,
@@ -275,11 +277,11 @@ SPEED_INCREASE_ON_CREEP_DICT: Dict[UnitTypeId, float] = {
     UnitTypeId.SPINECRAWLER: 2.5,
     UnitTypeId.SPORECRAWLER: 2.5,
 }
-OFF_CREEP_SPEED_UPGRADE_DICT: Dict[UnitTypeId, UpgradeId] = {
+OFF_CREEP_SPEED_UPGRADE_DICT: dict[UnitTypeId, UpgradeId] = {
     UnitTypeId.HYDRALISK: UpgradeId.EVOLVEMUSCULARAUGMENTS,
     UnitTypeId.ULTRALISK: UpgradeId.ANABOLICSYNTHESIS,
 }
-OFF_CREEP_SPEED_INCREASE_DICT: Dict[UnitTypeId, float] = {
+OFF_CREEP_SPEED_INCREASE_DICT: dict[UnitTypeId, float] = {
     UnitTypeId.HYDRALISK: 1.25,
     UnitTypeId.ULTRALISK: 1.2,
 }
@@ -289,7 +291,7 @@ assert temp1 == temp2, f"{temp1.symmetric_difference(temp2)}"
 del temp1
 del temp2
 # Movement speed gets altered by this factor if it is affected by this buff
-SPEED_ALTERING_BUFFS: Dict[BuffId, float] = {
+SPEED_ALTERING_BUFFS: dict[BuffId, float] = {
     # Stimpack increases speed by 1.5
     BuffId.STIMPACK: 1.5,
     BuffId.STIMPACKMARAUDER: 1.5,
@@ -307,7 +309,7 @@ SPEED_ALTERING_BUFFS: Dict[BuffId, float] = {
 UNIT_PHOTONCANNON: UnitTypeId = UnitTypeId.PHOTONCANNON
 UNIT_COLOSSUS: UnitTypeId = UnitTypeId.COLOSSUS
 # Used in unit_command.py and action.py to combine only certain abilities
-COMBINEABLE_ABILITIES: Set[AbilityId] = {
+COMBINEABLE_ABILITIES: set[AbilityId] = {
     AbilityId.MOVE,
     AbilityId.ATTACK,
     AbilityId.SCAN_MOVE,
@@ -328,18 +330,18 @@ COMBINEABLE_ABILITIES: Set[AbilityId] = {
     AbilityId.EFFECT_BLINK,
     AbilityId.MORPH_ARCHON,
 }
-FakeEffectRadii: Dict[int, float] = {
+FakeEffectRadii: dict[int, float] = {
     UnitTypeId.KD8CHARGE.value: 2,
     UnitTypeId.PARASITICBOMBDUMMY.value: 3,
     UnitTypeId.FORCEFIELD.value: 1.5,
 }
-FakeEffectID: Dict[int, str] = {
+FakeEffectID: dict[int, str] = {
     UnitTypeId.KD8CHARGE.value: "KD8CHARGE",
     UnitTypeId.PARASITICBOMBDUMMY.value: "PARASITICBOMB",
     UnitTypeId.FORCEFIELD.value: "FORCEFIELD",
 }
 
-TERRAN_STRUCTURES_REQUIRE_SCV: Set[UnitTypeId] = {
+TERRAN_STRUCTURES_REQUIRE_SCV: set[UnitTypeId] = {
     UnitTypeId.ARMORY,
     UnitTypeId.BARRACKS,
     UnitTypeId.BUNKER,
@@ -363,7 +365,7 @@ def return_NOTAUNIT() -> UnitTypeId:
 
 
 # Hotfix for structures and units as the API does not seem to return the correct values, e.g. ghost and thor have None in the requirements
-TERRAN_TECH_REQUIREMENT: Dict[UnitTypeId, UnitTypeId] = defaultdict(
+TERRAN_TECH_REQUIREMENT: dict[UnitTypeId, UnitTypeId] = defaultdict(
     return_NOTAUNIT,
     {
         UnitTypeId.MISSILETURRET: UnitTypeId.ENGINEERINGBAY,
@@ -383,7 +385,7 @@ TERRAN_TECH_REQUIREMENT: Dict[UnitTypeId, UnitTypeId] = defaultdict(
         UnitTypeId.BATTLECRUISER: UnitTypeId.FUSIONCORE,
     },
 )
-PROTOSS_TECH_REQUIREMENT: Dict[UnitTypeId, UnitTypeId] = defaultdict(
+PROTOSS_TECH_REQUIREMENT: dict[UnitTypeId, UnitTypeId] = defaultdict(
     return_NOTAUNIT,
     {
         UnitTypeId.PHOTONCANNON: UnitTypeId.FORGE,
@@ -407,7 +409,7 @@ PROTOSS_TECH_REQUIREMENT: Dict[UnitTypeId, UnitTypeId] = defaultdict(
         UnitTypeId.DISRUPTOR: UnitTypeId.ROBOTICSBAY,
     },
 )
-ZERG_TECH_REQUIREMENT: Dict[UnitTypeId, UnitTypeId] = defaultdict(
+ZERG_TECH_REQUIREMENT: dict[UnitTypeId, UnitTypeId] = defaultdict(
     return_NOTAUNIT,
     {
         UnitTypeId.ZERGLING: UnitTypeId.SPAWNINGPOOL,
@@ -440,7 +442,7 @@ ZERG_TECH_REQUIREMENT: Dict[UnitTypeId, UnitTypeId] = defaultdict(
     },
 )
 # Required in 'tech_requirement_progress' bot_ai.py function
-EQUIVALENTS_FOR_TECH_PROGRESS: Dict[UnitTypeId, Set[UnitTypeId]] = {
+EQUIVALENTS_FOR_TECH_PROGRESS: dict[UnitTypeId, set[UnitTypeId]] = {
     # Protoss
     UnitTypeId.GATEWAY: {UnitTypeId.WARPGATE},
     UnitTypeId.WARPPRISM: {UnitTypeId.WARPPRISMPHASING},
@@ -482,7 +484,7 @@ EQUIVALENTS_FOR_TECH_PROGRESS: Dict[UnitTypeId, Set[UnitTypeId]] = {
     UnitTypeId.ULTRALISK: {UnitTypeId.ULTRALISKBURROWED},
     # TODO What about morphing untis? E.g. roach to ravager, overlord to drop-overlord or overseer
 }
-ALL_GAS: Set[UnitTypeId] = {
+ALL_GAS: set[UnitTypeId] = {
     UnitTypeId.ASSIMILATOR,
     UnitTypeId.ASSIMILATORRICH,
     UnitTypeId.REFINERY,
@@ -490,7 +492,7 @@ ALL_GAS: Set[UnitTypeId] = {
     UnitTypeId.EXTRACTOR,
     UnitTypeId.EXTRACTORRICH,
 }
-DAMAGE_BONUS_PER_UPGRADE: Dict[UnitTypeId, Dict[TargetType, Any]] = {
+DAMAGE_BONUS_PER_UPGRADE: dict[UnitTypeId, dict[TargetType, Any]] = {
     #
     # Protoss
     #
@@ -546,7 +548,7 @@ TARGET_HELPER = {
     4: "Point2 or Unit",
     5: "Point2 or no target",
 }
-CREATION_ABILITY_FIX: Dict[UnitTypeId, AbilityId] = {
+CREATION_ABILITY_FIX: dict[UnitTypeId, AbilityId] = {
     UnitTypeId.ARCHON: AbilityId.ARCHON_WARP_TARGET,
     UnitTypeId.ASSIMILATORRICH: AbilityId.PROTOSSBUILD_ASSIMILATOR,
     UnitTypeId.BANELINGCOCOON: AbilityId.MORPHZERGLINGTOBANELING_BANELING,

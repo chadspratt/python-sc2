@@ -6,7 +6,7 @@ import random
 import warnings
 from collections import Counter
 from functools import cached_property
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING
 
 from loguru import logger
 
@@ -54,7 +54,7 @@ class BotAI(BotAIInternal):
         return f"{int(t // 60):02}:{int(t % 60):02}"
 
     @property
-    def step_time(self) -> Tuple[float, float, float, float]:
+    def step_time(self) -> tuple[float, float, float, float]:
         """Returns a tuple of step duration in milliseconds.
         First value is the minimum step duration - the shortest the bot ever took
         Second value is the average step duration
@@ -121,7 +121,7 @@ class BotAI(BotAIInternal):
         return self.game_info.player_start_location
 
     @property
-    def enemy_start_locations(self) -> List[Point2]:
+    def enemy_start_locations(self) -> list[Point2]:
         """Possible start locations for enemies."""
         return self.game_info.start_locations
 
@@ -149,13 +149,13 @@ class BotAI(BotAIInternal):
         return found_main_base_ramp
 
     @property_cache_once_per_frame
-    def expansion_locations_list(self) -> List[Point2]:
+    def expansion_locations_list(self) -> list[Point2]:
         """Returns a list of expansion positions, not sorted in any way."""
         assert self._expansion_positions_list, "self._find_expansion_locations() has not been run yet, so accessing the list of expansion locations is pointless."
         return self._expansion_positions_list
 
     @property_cache_once_per_frame
-    def expansion_locations_dict(self) -> Dict[Point2, Units]:
+    def expansion_locations_dict(self) -> dict[Point2, Units]:
         """
         Returns dict with the correct expansion position Point2 object as key,
         resources as Units (mineral fields and vespene geysers) as value.
@@ -163,7 +163,7 @@ class BotAI(BotAIInternal):
         Caution: This function is slow. If you only need the expansion locations, use the property above.
         """
         assert self._expansion_positions_list, "self._find_expansion_locations() has not been run yet, so accessing the list of expansion locations is pointless."
-        expansion_locations: Dict[Point2, Units] = {pos: Units([], self) for pos in self._expansion_positions_list}
+        expansion_locations: dict[Point2, Units] = {pos: Units([], self) for pos in self._expansion_positions_list}
         for resource in self.resources:
             # It may be that some resources are not mapped to an expansion location
             exp_position: Point2 = self._resource_location_to_expansion_position_dict.get(resource.position, None)
@@ -193,8 +193,8 @@ class BotAI(BotAIInternal):
         return self._units_created
 
     async def get_available_abilities(
-        self, units: Union[List[Unit], Units], ignore_resource_requirements: bool = False
-    ) -> List[List[AbilityId]]:
+        self, units: list[Unit] | Units, ignore_resource_requirements: bool = False
+    ) -> list[list[AbilityId]]:
         """Returns available abilities of one or more units. Right now only checks cooldown, energy cost, and whether the ability has been researched.
 
         Examples::
@@ -209,7 +209,7 @@ class BotAI(BotAIInternal):
         :param ignore_resource_requirements:"""
         return await self.client.query_available_abilities(units, ignore_resource_requirements)
 
-    async def expand_now(self, building: UnitTypeId = None, max_distance: int = 10, location: Optional[Point2] = None):
+    async def expand_now(self, building: UnitTypeId = None, max_distance: int = 10, location: Point2 | None = None):
         """Finds the next possible expansion via 'self.get_next_expansion()'. If the target expansion is blocked (e.g. an enemy unit), it will misplace the expansion.
 
         :param building:
@@ -235,7 +235,7 @@ class BotAI(BotAIInternal):
             return
         await self.build(building, near=location, max_distance=max_distance, random_alternative=False, placement_step=1)
 
-    async def get_next_expansion(self) -> Optional[Point2]:
+    async def get_next_expansion(self) -> Point2 | None:
         """Find next expansion location."""
 
         closest = None
@@ -367,7 +367,7 @@ class BotAI(BotAIInternal):
                 pass
 
     @property_cache_once_per_frame
-    def owned_expansions(self) -> Dict[Point2, Unit]:
+    def owned_expansions(self) -> dict[Point2, Unit]:
         """Dict of expansions owned by the player with mapping {expansion_location: townhall_structure}."""
         owned = {}
         for el in self.expansion_locations_list:
@@ -438,7 +438,7 @@ class BotAI(BotAIInternal):
         unit_data = self.game_data.units[unit_type.value]
         return Cost(unit_data._proto.mineral_cost, unit_data._proto.vespene_cost)
 
-    def calculate_cost(self, item_id: Union[UnitTypeId, UpgradeId, AbilityId]) -> Cost:
+    def calculate_cost(self, item_id: UnitTypeId | UpgradeId | AbilityId) -> Cost:
         """
         Calculate the required build, train or morph cost of a unit. It is recommended to use the UnitTypeId instead of the ability to create the unit.
         The total cost to create a ravager is 100/100, but the actual morph cost from roach to ravager is only 25/75, so this function returns 25/75.
@@ -490,7 +490,7 @@ class BotAI(BotAIInternal):
             cost = self.game_data.calculate_ability_cost(item_id)
         return cost
 
-    def can_afford(self, item_id: Union[UnitTypeId, UpgradeId, AbilityId], check_supply_cost: bool = True) -> bool:
+    def can_afford(self, item_id: UnitTypeId | UpgradeId | AbilityId, check_supply_cost: bool = True) -> bool:
         """Tests if the player has enough resources to build a unit or structure.
 
         Example::
@@ -521,9 +521,9 @@ class BotAI(BotAIInternal):
         self,
         unit: Unit,
         ability_id: AbilityId,
-        target: Optional[Union[Unit, Point2]] = None,
+        target: Unit | Point2 | None = None,
         only_check_energy_and_cooldown: bool = False,
-        cached_abilities_of_unit: List[AbilityId] = None,
+        cached_abilities_of_unit: list[AbilityId] = None,
     ) -> bool:
         """Tests if a unit has an ability available and enough energy to cast it.
 
@@ -541,7 +541,7 @@ class BotAI(BotAIInternal):
         :param cached_abilities_of_unit:"""
         assert isinstance(unit, Unit), f"{unit} is no Unit object"
         assert isinstance(ability_id, AbilityId), f"{ability_id} is no AbilityId"
-        assert isinstance(target, (type(None), Unit, Point2))
+        assert isinstance(target, type(None) | Unit | Point2)
         # check if unit has enough energy to cast or if ability is on cooldown
         if cached_abilities_of_unit:
             abilities = cached_abilities_of_unit
@@ -577,7 +577,7 @@ class BotAI(BotAIInternal):
                 return True
         return False
 
-    def select_build_worker(self, pos: Union[Unit, Point2], force: bool = False) -> Optional[Unit]:
+    def select_build_worker(self, pos: Unit | Point2, force: bool = False) -> Unit | None:
         """Select a worker to build a building with.
 
         Example::
@@ -606,16 +606,14 @@ class BotAI(BotAIInternal):
             return workers.random if force else None
         return None
 
-    async def can_place_single(self, building: Union[AbilityId, UnitTypeId], position: Point2) -> bool:
+    async def can_place_single(self, building: AbilityId | UnitTypeId, position: Point2) -> bool:
         """Checks the placement for only one position."""
         if isinstance(building, UnitTypeId):
             creation_ability = self.game_data.units[building.value].creation_ability.id
             return (await self.client._query_building_placement_fast(creation_ability, [position]))[0]
         return (await self.client._query_building_placement_fast(building, [position]))[0]
 
-    async def can_place(
-        self, building: Union[AbilityData, AbilityId, UnitTypeId], positions: List[Point2]
-    ) -> List[bool]:
+    async def can_place(self, building: AbilityData | AbilityId | UnitTypeId, positions: list[Point2]) -> list[bool]:
         """Tests if a building can be placed in the given locations.
 
         Example::
@@ -640,7 +638,7 @@ class BotAI(BotAIInternal):
             )
             building = building_type.id
 
-        if isinstance(positions, (Point2, tuple)):
+        if isinstance(positions, Point2 | tuple):
             warnings.warn(
                 "The support for querying single entries will be removed soon. Please use either 'await self.can_place_single(building, position)' or 'await (self.can_place(building, [position]))[0]",
                 DeprecationWarning,
@@ -655,13 +653,13 @@ class BotAI(BotAIInternal):
 
     async def find_placement(
         self,
-        building: Union[UnitTypeId, AbilityId],
+        building: UnitTypeId | AbilityId,
         near: Point2,
         max_distance: int = 20,
         random_alternative: bool = True,
         placement_step: int = 2,
         addon_place: bool = False,
-    ) -> Optional[Point2]:
+    ) -> Point2 | None:
         """Finds a placement location for building.
 
         Example::
@@ -677,7 +675,7 @@ class BotAI(BotAIInternal):
         :param placement_step:
         :param addon_place:"""
 
-        assert isinstance(building, (AbilityId, UnitTypeId))
+        assert isinstance(building, AbilityId | UnitTypeId)
         assert isinstance(near, Point2), f"{near} is no Point2 object"
 
         if isinstance(building, UnitTypeId):
@@ -747,7 +745,7 @@ class BotAI(BotAIInternal):
                     return order.progress
         return 0
 
-    def structure_type_build_progress(self, structure_type: Union[UnitTypeId, int]) -> float:
+    def structure_type_build_progress(self, structure_type: UnitTypeId | int) -> float:
         """
         Returns the build progress of a structure type.
 
@@ -775,7 +773,7 @@ class BotAI(BotAIInternal):
         :param structure_type:
         """
         assert isinstance(
-            structure_type, (int, UnitTypeId)
+            structure_type, int | UnitTypeId
         ), f"Needs to be int or UnitTypeId, but was: {type(structure_type)}"
         if isinstance(structure_type, int):
             structure_type_value: int = structure_type
@@ -783,7 +781,7 @@ class BotAI(BotAIInternal):
         else:
             structure_type_value = structure_type.value
         assert structure_type_value, f"structure_type can not be 0 or NOTAUNIT, but was: {structure_type_value}"
-        equiv_values: Set[int] = {structure_type_value} | {
+        equiv_values: set[int] = {structure_type_value} | {
             s_type.value for s_type in EQUIVALENTS_FOR_TECH_PROGRESS.get(structure_type, set())
         }
         # SUPPLYDEPOTDROP is not in self.game_data.units, so bot_ai should not check the build progress via creation ability (worker abilities)
@@ -833,12 +831,12 @@ class BotAI(BotAIInternal):
         # unit_info_id_value = self.game_data.units[structure_type.value]._proto.tech_requirement
         if not unit_info_id_value:  # Equivalent to "if unit_info_id_value == 0:"
             return 1
-        progresses: List[float] = [self.structure_type_build_progress(unit_info_id_value)]
+        progresses: list[float] = [self.structure_type_build_progress(unit_info_id_value)]
         for equiv_structure in EQUIVALENTS_FOR_TECH_PROGRESS.get(unit_info_id, []):
             progresses.append(self.structure_type_build_progress(equiv_structure.value))
         return max(progresses)
 
-    def already_pending(self, unit_type: Union[UpgradeId, UnitTypeId]) -> float:
+    def already_pending(self, unit_type: UpgradeId | UnitTypeId) -> float:
         """
         Returns a number of buildings or units already in progress, or if a
         worker is en route to build it. This also includes queued orders for
@@ -878,7 +876,7 @@ class BotAI(BotAIInternal):
     def structures_without_construction_SCVs(self) -> Units:
         """Returns all structures that do not have an SCV constructing it.
         Warning: this function may move to become a Units filter."""
-        worker_targets: Set[Union[int, Point2]] = set()
+        worker_targets: set[int | Point2] = set()
         for worker in self.workers:
             # Ignore repairing workers
             if not worker.is_constructing_scv:
@@ -899,9 +897,9 @@ class BotAI(BotAIInternal):
     async def build(
         self,
         building: UnitTypeId,
-        near: Union[Unit, Point2],
+        near: Unit | Point2,
         max_distance: int = 20,
-        build_worker: Optional[Unit] = None,
+        build_worker: Unit | None = None,
         random_alternative: bool = True,
         placement_step: int = 2,
     ) -> bool:
@@ -916,7 +914,7 @@ class BotAI(BotAIInternal):
         :param random_alternative:
         :param placement_step:"""
 
-        assert isinstance(near, (Unit, Point2))
+        assert isinstance(near, Unit | Point2)
         if not self.can_afford(building):
             return False
         p = None
@@ -987,7 +985,7 @@ class BotAI(BotAIInternal):
 
         trained_amount = 0
         # All train structure types: queen can made from hatchery, lair, hive
-        train_structure_type: Set[UnitTypeId] = UNIT_TRAINED_FROM[unit_type]
+        train_structure_type: set[UnitTypeId] = UNIT_TRAINED_FROM[unit_type]
         train_structures = self.structures if self.race != Race.Zerg else self.structures | self.larva
         requires_techlab = any(
             TRAIN_INFO[structure_type][unit_type].get("requires_techlab", False)
@@ -1109,7 +1107,7 @@ class BotAI(BotAIInternal):
             return False
 
         research_structure_types: UnitTypeId = UPGRADE_RESEARCHED_FROM[upgrade_type]
-        required_tech_building: Optional[UnitTypeId] = RESEARCH_INFO[research_structure_types][upgrade_type].get(
+        required_tech_building: UnitTypeId | None = RESEARCH_INFO[research_structure_types][upgrade_type].get(
             "required_building", None
         )
 
@@ -1131,7 +1129,7 @@ class BotAI(BotAIInternal):
         }
         # Convert to a set, or equivalent structures are chosen
         # Overlord speed upgrade can be researched from hatchery, lair or hive
-        research_structure_types: Set[UnitTypeId] = equiv_structures.get(
+        research_structure_types: set[UnitTypeId] = equiv_structures.get(
             research_structure_types, {research_structure_types}
         )
 
@@ -1166,7 +1164,7 @@ class BotAI(BotAIInternal):
         assert isinstance(message, str), f"{message} is not a string"
         await self.client.chat_send(message, team_only)
 
-    def in_map_bounds(self, pos: Union[Point2, tuple, list]) -> bool:
+    def in_map_bounds(self, pos: Point2 | tuple | list) -> bool:
         """Tests if a 2 dimensional point is within the map boundaries of the pixelmaps.
 
         :param pos:"""
@@ -1180,55 +1178,55 @@ class BotAI(BotAIInternal):
         )
 
     # For the functions below, make sure you are inside the boundaries of the map size.
-    def get_terrain_height(self, pos: Union[Point2, Unit]) -> int:
+    def get_terrain_height(self, pos: Point2 | Unit) -> int:
         """Returns terrain height at a position.
         Caution: terrain height is different from a unit's z-coordinate.
 
         :param pos:"""
-        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.game_info.terrain_height[pos]
 
-    def get_terrain_z_height(self, pos: Union[Point2, Unit]) -> float:
+    def get_terrain_z_height(self, pos: Point2 | Unit) -> float:
         """Returns terrain z-height at a position.
 
         :param pos:"""
-        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return -16 + 32 * self.game_info.terrain_height[pos] / 255
 
-    def in_placement_grid(self, pos: Union[Point2, Unit]) -> bool:
+    def in_placement_grid(self, pos: Point2 | Unit) -> bool:
         """Returns True if you can place something at a position.
         Remember, buildings usually use 2x2, 3x3 or 5x5 of these grid points.
         Caution: some x and y offset might be required, see ramp code in game_info.py
 
         :param pos:"""
-        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.game_info.placement_grid[pos] == 1
 
-    def in_pathing_grid(self, pos: Union[Point2, Unit]) -> bool:
+    def in_pathing_grid(self, pos: Point2 | Unit) -> bool:
         """Returns True if a ground unit can pass through a grid point.
 
         :param pos:"""
-        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.game_info.pathing_grid[pos] == 1
 
-    def is_visible(self, pos: Union[Point2, Unit]) -> bool:
+    def is_visible(self, pos: Point2 | Unit) -> bool:
         """Returns True if you have vision on a grid point.
 
         :param pos:"""
         # more info: https://github.com/Blizzard/s2client-proto/blob/9906df71d6909511907d8419b33acc1a3bd51ec0/s2clientprotocol/spatial.proto#L19
-        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.state.visibility[pos] == 2
 
-    def has_creep(self, pos: Union[Point2, Unit]) -> bool:
+    def has_creep(self, pos: Point2 | Unit) -> bool:
         """Returns True if there is creep on the grid point.
 
         :param pos:"""
-        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.state.creep[pos] == 1
 

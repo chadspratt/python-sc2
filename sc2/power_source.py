@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import List
 
 from sc2.position import Point2
 
@@ -26,7 +27,7 @@ class PowerSource:
 
 @dataclass
 class PsionicMatrix:
-    sources: List[PowerSource]
+    sources: list[PowerSource]
 
     @classmethod
     def from_proto(cls, proto):

@@ -6,7 +6,6 @@ These will then be used to run tests from the test script "test_pickled_data.py"
 import lzma
 import pickle
 from pathlib import Path
-from typing import Set
 
 from loguru import logger
 from s2clientprotocol import sc2api_pb2 as sc_pb
@@ -75,7 +74,7 @@ class ExporterBot(BotAI):
         await self.client.debug_god()
 
         # Spawn one of each unit
-        valid_units: Set[UnitTypeId] = {
+        valid_units: set[UnitTypeId] = {
             UnitTypeId(unit_id)
             for unit_id, data in self.game_data.units.items()
             if data._proto.race != Race.NoRace

@@ -5,12 +5,13 @@ self.can_place (RequestQueryBuildingPlacement)
 TODO: self.client.query_pathing (RequestQueryPathing)
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
 sys.path.append(Path(__file__).parent)
 
-from typing import List, Union
 
 from loguru import logger
 
@@ -69,16 +70,16 @@ class TestBot(BotAI):
             await self.client.debug_kill_unit(my_units)
             await self._advance_steps(10)
 
-    async def spawn_unit(self, unit_type: Union[UnitTypeId, List[UnitTypeId]]):
+    async def spawn_unit(self, unit_type: UnitTypeId | list[UnitTypeId]):
         await self._advance_steps(10)
-        if not isinstance(unit_type, List):
+        if not isinstance(unit_type, list):
             unit_type = [unit_type]
         for i in unit_type:
             await self.client.debug_create_unit([[i, 1, self.game_info.map_center, 1]])
 
-    async def spawn_unit_enemy(self, unit_type: Union[UnitTypeId, List[UnitTypeId]]):
+    async def spawn_unit_enemy(self, unit_type: UnitTypeId | list[UnitTypeId]):
         await self._advance_steps(10)
-        if not isinstance(unit_type, List):
+        if not isinstance(unit_type, list):
             unit_type = [unit_type]
         for i in unit_type:
             if i == UnitTypeId.CREEPTUMOR:

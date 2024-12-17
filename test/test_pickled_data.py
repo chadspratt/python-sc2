@@ -8,6 +8,8 @@ It will load the pickle files, recreate the bot object from scratch and tests mo
 All functions that require some kind of query or interaction with the API directly will have to be tested in the "autotest_bot.py" in a live game.
 """
 
+from __future__ import annotations
+
 import lzma
 import math
 import pickle
@@ -17,7 +19,7 @@ import sys
 import unittest
 from contextlib import suppress
 from pathlib import Path
-from typing import Any, List, Tuple
+from typing import Any
 
 from google.protobuf.internal import api_implementation
 from hypothesis import given, settings
@@ -40,12 +42,12 @@ from sc2.position import Point2, Point3, Rect, Size
 from sc2.unit import Unit
 from sc2.units import Units
 
-MAPS: List[Path] = [
+MAPS: list[Path] = [
     map_path for map_path in (Path(__file__).parent / "pickle_data").iterdir() if map_path.suffix == ".xz"
 ]
 
 
-def load_map_pickle_data(map_path: Path) -> Tuple[Any, Any, Any]:
+def load_map_pickle_data(map_path: Path) -> tuple[Any, Any, Any]:
     with lzma.open(str(map_path.absolute()), "rb") as f:
         raw_game_data, raw_game_info, raw_observation = pickle.load(f)
         return raw_game_data, raw_game_info, raw_observation
@@ -112,7 +114,7 @@ def test_bot_ai():
     assert bot.vespene_geyser
     assert bot.resources
     assert len(bot.destructables) >= 0
-    assert isinstance(bot.destructables, (list, set, dict))
+    assert isinstance(bot.destructables, (list | set | dict))
     assert len(bot.watchtowers) >= 0
     assert bot.all_units
     assert bot.workers
@@ -438,24 +440,24 @@ def test_game_data():
         with suppress(ValueError):
             assert unit_data.id
         assert unit_data.name
-        assert isinstance(unit_data.creation_ability, (AbilityData, type(None)))
-        assert isinstance(unit_data.footprint_radius, (float, type(None)))
+        assert isinstance(unit_data.creation_ability, (AbilityData | type(None)))
+        assert isinstance(unit_data.footprint_radius, (float | type(None)))
         # TODO Fails on newer python versions
         # assert isinstance(unit_data.attributes, RepeatedScalarContainer)
         assert isinstance(unit_data.has_minerals, bool)
         assert isinstance(unit_data.has_vespene, bool)
         assert isinstance(unit_data.cargo_size, int)
-        assert isinstance(unit_data.tech_requirement, (UnitTypeId, type(None)))
-        assert isinstance(unit_data.tech_alias, (list, type(None)))
-        assert isinstance(unit_data.unit_alias, (UnitTypeId, type(None)))
+        assert isinstance(unit_data.tech_requirement, (UnitTypeId | type(None)))
+        assert isinstance(unit_data.tech_alias, (list | type(None)))
+        assert isinstance(unit_data.unit_alias, (UnitTypeId | type(None)))
         assert isinstance(unit_data.race, Race)
         assert isinstance(unit_data.cost_zerg_corrected, Cost)
-        assert isinstance(unit_data.morph_cost, (Cost, type(None)))
+        assert isinstance(unit_data.morph_cost, (Cost | type(None)))
 
     assert game_data.upgrades
     for upgrade_data in game_data.upgrades.values():
         assert isinstance(upgrade_data.name, str)
-        assert isinstance(upgrade_data.research_ability, (AbilityData, type(None)))
+        assert isinstance(upgrade_data.research_ability, (AbilityData | type(None)))
         assert isinstance(upgrade_data.cost, Cost)
 
 

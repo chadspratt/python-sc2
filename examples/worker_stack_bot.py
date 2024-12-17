@@ -13,7 +13,8 @@ Task for the user who wants to enhance this bot:
 - Re-assign workers when gas mines out
 """
 
-from typing import Dict, Set
+from __future__ import annotations
+
 
 from loguru import logger
 
@@ -30,8 +31,8 @@ from sc2.units import Units
 # pylint: disable=W0231
 class WorkerStackBot(BotAI):
     def __init__(self):
-        self.worker_to_mineral_patch_dict: Dict[int, int] = {}
-        self.mineral_patch_to_list_of_workers: Dict[int, Set[int]] = {}
+        self.worker_to_mineral_patch_dict: dict[int, int] = {}
+        self.mineral_patch_to_list_of_workers: dict[int, set[int]] = {}
         self.minerals_sorted_by_distance: Units = Units([], self)
         # Distance 0.01 to 0.1 seems fine
         self.townhall_distance_threshold = 0.01
@@ -67,7 +68,7 @@ class WorkerStackBot(BotAI):
     async def on_step(self, iteration: int):
         if self.worker_to_mineral_patch_dict:
             # Quick-access cache mineral tag to mineral Unit
-            minerals: Dict[int, Unit] = {mineral.tag: mineral for mineral in self.mineral_field}
+            minerals: dict[int, Unit] = {mineral.tag: mineral for mineral in self.mineral_field}
 
             for worker in self.workers:
                 if not self.townhalls:
@@ -76,7 +77,7 @@ class WorkerStackBot(BotAI):
 
                 worker: Unit
                 mineral_tag = self.worker_to_mineral_patch_dict[worker.tag]
-                mineral = minerals.get(mineral_tag, None)
+                mineral = minerals.get(mineral_tag)
                 if mineral is None:
                     logger.error(f"Mined out mineral with tag {mineral_tag} for worker {worker.tag}")
                     continue

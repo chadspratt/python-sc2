@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Set, Tuple, Union
+from collections.abc import Iterable
 
 from loguru import logger
 from s2clientprotocol import debug_pb2 as debug_pb
@@ -32,11 +32,11 @@ class Client(Protocol):
         super().__init__(ws)
         # How many frames will be waited between iterations before the next one is called
         self.game_step: int = 4
-        self.save_replay_path: Optional[str] = save_replay_path
+        self.save_replay_path: str | None = save_replay_path
         self._player_id = None
         self._game_result = None
         # Store a hash value of all the debug requests to prevent sending the same ones again if they haven't changed last frame
-        self._debug_hash_tuple_last_iteration: Tuple[int, int, int, int] = (0, 0, 0, 0)
+        self._debug_hash_tuple_last_iteration: tuple[int, int, int, int] = (0, 0, 0, 0)
         self._debug_draw_last_frame = False
         self._debug_texts = []
         self._debug_lines = []
@@ -202,15 +202,13 @@ class Client(Protocol):
             return [ActionResult(r) for r in res.action.result]
         return [ActionResult(r) for r in res.action.result if ActionResult(r) != ActionResult.Success]
 
-    async def query_pathing(
-        self, start: Union[Unit, Point2, Point3], end: Union[Point2, Point3]
-    ) -> Optional[Union[int, float]]:
+    async def query_pathing(self, start: Unit | Point2 | Point3, end: Point2 | Point3) -> int | float | None:
         """Caution: returns "None" when path not found
         Try to combine queries with the function below because the pathing query is generally slow.
 
         :param start:
         :param end:"""
-        assert isinstance(start, (Point2, Unit))
+        assert isinstance(start, Point2 | Unit)
         assert isinstance(end, Point2)
         if isinstance(start, Point2):
             path = [query_pb.RequestQueryPathing(start_pos=start.as_Point2D, end_pos=end.as_Point2D)]
@@ -222,7 +220,7 @@ class Client(Protocol):
             return None
         return distance
 
-    async def query_pathings(self, zipped_list: List[List[Union[Unit, Point2, Point3]]]) -> List[float]:
+    async def query_pathings(self, zipped_list: list[list[Unit | Point2 | Point3]]) -> list[float]:
         """Usage: await self.query_pathings([[unit1, target2], [unit2, target2]])
         -> returns [distance1, distance2]
         Caution: returns 0 when path not found
@@ -233,7 +231,7 @@ class Client(Protocol):
         assert isinstance(zipped_list, list), f"{type(zipped_list)}"
         assert isinstance(zipped_list[0], list), f"{type(zipped_list[0])}"
         assert len(zipped_list[0]) == 2, f"{len(zipped_list[0])}"
-        assert isinstance(zipped_list[0][0], (Point2, Unit)), f"{type(zipped_list[0][0])}"
+        assert isinstance(zipped_list[0][0], Point2 | Unit), f"{type(zipped_list[0][0])}"
         assert isinstance(zipped_list[0][1], Point2), f"{type(zipped_list[0][1])}"
         if isinstance(zipped_list[0][0], Point2):
             path = (
@@ -245,8 +243,8 @@ class Client(Protocol):
         return [float(d.distance) for d in results.query.pathing]
 
     async def _query_building_placement_fast(
-        self, ability: AbilityId, positions: List[Union[Point2, Point3]], ignore_resources: bool = True
-    ) -> List[bool]:
+        self, ability: AbilityId, positions: list[Point2 | Point3], ignore_resources: bool = True
+    ) -> list[bool]:
         """
         Returns a list of booleans. Return True for positions that are valid, False otherwise.
 
@@ -267,8 +265,8 @@ class Client(Protocol):
         return [p.result == 1 for p in result.query.placements]
 
     async def query_building_placement(
-        self, ability: AbilityData, positions: List[Union[Point2, Point3]], ignore_resources: bool = True
-    ) -> List[ActionResult]:
+        self, ability: AbilityData, positions: list[Point2 | Point3], ignore_resources: bool = True
+    ) -> list[ActionResult]:
         """This function might be deleted in favor of the function above (_query_building_placement_fast).
 
         :param ability:
@@ -288,8 +286,8 @@ class Client(Protocol):
         return [ActionResult(p.result) for p in result.query.placements]
 
     async def query_available_abilities(
-        self, units: Union[List[Unit], Units], ignore_resource_requirements: bool = False
-    ) -> List[List[AbilityId]]:
+        self, units: list[Unit] | Units, ignore_resource_requirements: bool = False
+    ) -> list[list[AbilityId]]:
         """Query abilities of multiple units"""
         input_was_a_list = True
         if not isinstance(units, list):
@@ -310,8 +308,8 @@ class Client(Protocol):
         return [[AbilityId(a.ability_id) for a in b.abilities] for b in result.query.abilities]
 
     async def query_available_abilities_with_tag(
-        self, units: Union[List[Unit], Units], ignore_resource_requirements: bool = False
-    ) -> Dict[int, Set[AbilityId]]:
+        self, units: list[Unit] | Units, ignore_resource_requirements: bool = False
+    ) -> dict[int, set[AbilityId]]:
         """Query abilities of multiple units"""
 
         result = await self._execute(
@@ -331,7 +329,7 @@ class Client(Protocol):
             )
         )
 
-    async def toggle_autocast(self, units: Union[List[Unit], Units], ability: AbilityId):
+    async def toggle_autocast(self, units: list[Unit] | Units, ability: AbilityId):
         """Toggle autocast of all specified units
 
         :param units:
@@ -355,7 +353,7 @@ class Client(Protocol):
             )
         )
 
-    async def debug_create_unit(self, unit_spawn_commands: List[List[Union[UnitTypeId, int, Point2, Point3]]]):
+    async def debug_create_unit(self, unit_spawn_commands: list[list[UnitTypeId | int | Point2 | Point3]]):
         """Usage example (will spawn 5 marines in the center of the map for player ID 1):
         await self._client.debug_create_unit([[UnitTypeId.MARINE, 5, self._game_info.map_center, 1]])
 
@@ -366,7 +364,7 @@ class Client(Protocol):
         assert len(unit_spawn_commands[0]) == 4
         assert isinstance(unit_spawn_commands[0][0], UnitTypeId)
         assert unit_spawn_commands[0][1] > 0  # careful, in realtime=True this function may create more units
-        assert isinstance(unit_spawn_commands[0][2], (Point2, Point3))
+        assert isinstance(unit_spawn_commands[0][2], Point2 | Point3)
         assert 1 <= unit_spawn_commands[0][3] <= 2
 
         await self._execute(
@@ -385,7 +383,7 @@ class Client(Protocol):
             )
         )
 
-    async def debug_kill_unit(self, unit_tags: Union[Unit, Units, List[int], Set[int]]):
+    async def debug_kill_unit(self, unit_tags: Unit | Units | list[int] | set[int]):
         """
         :param unit_tags:
         """
@@ -399,11 +397,11 @@ class Client(Protocol):
             debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(kill_unit=debug_pb.DebugKillUnit(tag=unit_tags))])
         )
 
-    async def move_camera(self, position: Union[Unit, Units, Point2, Point3]):
+    async def move_camera(self, position: Unit | Units | Point2 | Point3):
         """Moves camera to the target position
 
         :param position:"""
-        assert isinstance(position, (Unit, Units, Point2, Point3))
+        assert isinstance(position, Unit | Units | Point2 | Point3)
         if isinstance(position, Units):
             position = position.center
         if isinstance(position, Unit):
@@ -420,11 +418,11 @@ class Client(Protocol):
             )
         )
 
-    async def obs_move_camera(self, position: Union[Unit, Units, Point2, Point3]):
+    async def obs_move_camera(self, position: Unit | Units | Point2 | Point3):
         """Moves observer camera to the target position. Only works when observing (e.g. watching the replay).
 
         :param position:"""
-        assert isinstance(position, (Unit, Units, Point2, Point3))
+        assert isinstance(position, Unit | Units | Point2 | Point3)
         if isinstance(position, Units):
             position = position.center
         if isinstance(position, Unit):
@@ -437,11 +435,11 @@ class Client(Protocol):
             )
         )
 
-    async def move_camera_spatial(self, position: Union[Point2, Point3]):
+    async def move_camera_spatial(self, position: Point2 | Point3):
         """Moves camera to the target position using the spatial aciton interface
 
         :param position:"""
-        assert isinstance(position, (Point2, Point3))
+        assert isinstance(position, Point2 | Point3)
         action = sc_pb.Action(
             action_render=spatial_pb.ActionSpatial(
                 camera_move=spatial_pb.ActionSpatialCameraMove(center_minimap=position.as_PointI)
@@ -456,8 +454,8 @@ class Client(Protocol):
     def debug_text_screen(
         self,
         text: str,
-        pos: Union[Point2, Point3, tuple, list],
-        color: Union[tuple, list, Point3] = None,
+        pos: Point2 | Point3 | tuple | list,
+        color: tuple | list | Point3 = None,
         size: int = 8,
     ):
         """
@@ -477,15 +475,13 @@ class Client(Protocol):
     def debug_text_2d(
         self,
         text: str,
-        pos: Union[Point2, Point3, tuple, list],
-        color: Union[tuple, list, Point3] = None,
+        pos: Point2 | Point3 | tuple | list,
+        color: tuple | list | Point3 = None,
         size: int = 8,
     ):
         return self.debug_text_screen(text, pos, color, size)
 
-    def debug_text_world(
-        self, text: str, pos: Union[Unit, Point3], color: Union[tuple, list, Point3] = None, size: int = 8
-    ):
+    def debug_text_world(self, text: str, pos: Unit | Point3, color: tuple | list | Point3 = None, size: int = 8):
         """
         Draws a text at Point3 position in the game world.
         To grab a unit's 3d position, use unit.position3d
@@ -500,14 +496,10 @@ class Client(Protocol):
         assert isinstance(pos, Point3)
         self._debug_texts.append(DrawItemWorldText(text=text, color=color, start_point=pos, font_size=size))
 
-    def debug_text_3d(
-        self, text: str, pos: Union[Unit, Point3], color: Union[tuple, list, Point3] = None, size: int = 8
-    ):
+    def debug_text_3d(self, text: str, pos: Unit | Point3, color: tuple | list | Point3 = None, size: int = 8):
         return self.debug_text_world(text, pos, color, size)
 
-    def debug_line_out(
-        self, p0: Union[Unit, Point3], p1: Union[Unit, Point3], color: Union[tuple, list, Point3] = None
-    ):
+    def debug_line_out(self, p0: Unit | Point3, p1: Unit | Point3, color: tuple | list | Point3 = None):
         """
         Draws a line from p0 to p1.
 
@@ -525,9 +517,9 @@ class Client(Protocol):
 
     def debug_box_out(
         self,
-        p_min: Union[Unit, Point3],
-        p_max: Union[Unit, Point3],
-        color: Union[tuple, list, Point3] = None,
+        p_min: Unit | Point3,
+        p_max: Unit | Point3,
+        color: tuple | list | Point3 = None,
     ):
         """
         Draws a box with p_min and p_max as corners of the box.
@@ -546,9 +538,9 @@ class Client(Protocol):
 
     def debug_box2_out(
         self,
-        pos: Union[Unit, Point3],
+        pos: Unit | Point3,
         half_vertex_length: float = 0.25,
-        color: Union[tuple, list, Point3] = None,
+        color: tuple | list | Point3 = None,
     ):
         """
         Draws a box center at a position 'pos', with box side lengths (vertices) of two times 'half_vertex_length'.
@@ -564,7 +556,7 @@ class Client(Protocol):
         p1 = pos + Point3((half_vertex_length, half_vertex_length, half_vertex_length))
         self._debug_boxes.append(DrawItemBox(start_point=p0, end_point=p1, color=color))
 
-    def debug_sphere_out(self, p: Union[Unit, Point3], r: float, color: Union[tuple, list, Point3] = None):
+    def debug_sphere_out(self, p: Unit | Point3, r: float, color: tuple | list | Point3 = None):
         """
         Draws a sphere at point p with radius r.
 
@@ -636,7 +628,7 @@ class Client(Protocol):
     async def debug_leave(self):
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(end_game=debug_pb.DebugEndGame())]))
 
-    async def debug_set_unit_value(self, unit_tags: Union[Iterable[int], Units, Unit], unit_value: int, value: float):
+    async def debug_set_unit_value(self, unit_tags: Iterable[int] | Units | Unit, unit_value: int, value: float):
         """Sets a "unit value" (Energy, Life or Shields) of the given units to the given value.
         Can't set the life of a unit to 0, use "debug_kill_unit" for that. Also can't set the life above the unit's maximum.
         The following example sets the health of all your workers to 1:
@@ -652,7 +644,7 @@ class Client(Protocol):
             1 <= unit_value <= 3
         ), f"unit_value needs to be between 1 and 3 (1 for energy, 2 for life, 3 for shields), given argument is {unit_value}"
         assert all(tag > 0 for tag in unit_tags), f"Unit tags have invalid value: {unit_tags}"
-        assert isinstance(value, (int, float)), "Value needs to be of type int or float"
+        assert isinstance(value, int | float), "Value needs to be of type int or float"
         assert value >= 0, "Value can't be negative"
         await self._execute(
             debug=sc_pb.RequestDebug(
@@ -740,12 +732,12 @@ class Client(Protocol):
 
 class DrawItem:
     @staticmethod
-    def to_debug_color(color: Union[tuple, Point3]):
+    def to_debug_color(color: tuple | Point3):
         """Helper function for color conversion"""
         if color is None:
             return debug_pb.Color(r=255, g=255, b=255)
         # Need to check if not of type Point3 because Point3 inherits from tuple
-        if isinstance(color, (tuple, list)) and not isinstance(color, Point3) and len(color) == 3:
+        if isinstance(color, tuple | list) and not isinstance(color, Point3) and len(color) == 3:
             return debug_pb.Color(r=color[0], g=color[1], b=color[2])
         # In case color is of type Point3
         r = getattr(color, "r", getattr(color, "x", 255))

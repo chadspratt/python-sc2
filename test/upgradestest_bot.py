@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
 sys.path.append(Path(__file__).parent)
-from typing import Dict, List
 
 from loguru import logger
 
@@ -88,11 +89,11 @@ class TestBot(BotAI):
         from sc2.dicts.unit_research_abilities import RESEARCH_INFO
         from sc2.dicts.upgrade_researched_from import UPGRADE_RESEARCHED_FROM
 
-        structure_types: List[UnitTypeId] = sorted(set(UPGRADE_RESEARCHED_FROM.values()), key=lambda data: data.name)
-        upgrade_types: List[UpgradeId] = list(UPGRADE_RESEARCHED_FROM)
+        structure_types: list[UnitTypeId] = sorted(set(UPGRADE_RESEARCHED_FROM.values()), key=lambda data: data.name)
+        upgrade_types: list[UpgradeId] = list(UPGRADE_RESEARCHED_FROM)
 
         # TODO if *techlab in name -> spawn rax/ fact / starport next to it
-        addon_structures: Dict[str, UnitTypeId] = {
+        addon_structures: dict[str, UnitTypeId] = {
             "BARRACKS": UnitTypeId.BARRACKS,
             "FACTORY": UnitTypeId.FACTORY,
             "STARPORT": UnitTypeId.STARPORT,
@@ -106,8 +107,8 @@ class TestBot(BotAI):
             if "TECHLAB" in structure_type.name:
                 continue
 
-            structure_upgrade_types: Dict[UpgradeId, Dict[str, AbilityId]] = RESEARCH_INFO[structure_type]
-            data: Dict[str, AbilityId]
+            structure_upgrade_types: dict[UpgradeId, dict[str, AbilityId]] = RESEARCH_INFO[structure_type]
+            data: dict[str, AbilityId]
             for upgrade_id, data in structure_upgrade_types.items():
                 # Collect data to spawn
                 research_ability: AbilityId = data.get("ability", None)
@@ -127,7 +128,7 @@ class TestBot(BotAI):
                     continue
 
                 # Spawn structure and requirements
-                spawn_structures: List[UnitTypeId] = []
+                spawn_structures: list[UnitTypeId] = []
                 if requires_power:
                     spawn_structures.append(UnitTypeId.PYLON)
                 spawn_structures.append(structure_type)

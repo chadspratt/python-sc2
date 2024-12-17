@@ -1,6 +1,5 @@
 import random
 from contextlib import suppress
-from typing import Set
 
 from sc2 import maps
 from sc2.bot_ai import BotAI
@@ -41,10 +40,10 @@ class ExpandEverywhere(BotAI):
         # Expand if we have 300 minerals, try to expand if there is one more expansion location available
         with suppress(AssertionError):
             if self.can_afford(UnitTypeId.HATCHERY):
-                planned_hatch_locations: Set[Point2] = {placeholder.position for placeholder in self.placeholders}
-                my_structure_locations: Set[Point2] = {structure.position for structure in self.structures}
-                enemy_structure_locations: Set[Point2] = {structure.position for structure in self.enemy_structures}
-                blocked_locations: Set[Point2] = (
+                planned_hatch_locations: set[Point2] = {placeholder.position for placeholder in self.placeholders}
+                my_structure_locations: set[Point2] = {structure.position for structure in self.structures}
+                enemy_structure_locations: set[Point2] = {structure.position for structure in self.enemy_structures}
+                blocked_locations: set[Point2] = (
                     my_structure_locations | planned_hatch_locations | enemy_structure_locations
                 )
                 shuffled_expansions = self.expansion_locations_list.copy()

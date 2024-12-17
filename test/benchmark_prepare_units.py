@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from test.test_pickled_data import MAPS, get_map_specific_bot
 
@@ -6,7 +8,7 @@ if TYPE_CHECKING:
     from sc2.bot_ai import BotAI
 
 
-def _run_prepare_units(bot_objects: List["BotAI"]):
+def _run_prepare_units(bot_objects: list[BotAI]):
     for bot_object in bot_objects:
         bot_object._prepare_units()
 

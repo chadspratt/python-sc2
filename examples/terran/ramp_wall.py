@@ -1,5 +1,4 @@
 import random
-from typing import FrozenSet, Set
 
 import numpy as np
 from loguru import logger
@@ -73,7 +72,7 @@ class RampWallBot(BotAI):
         # Draw if two selected units are facing each other - green if this guy is facing the other, red if he is not
         self.draw_facing_units()
 
-        depot_placement_positions: FrozenSet[Point2] = self.main_base_ramp.corner_depots
+        depot_placement_positions: frozenset[Point2] = self.main_base_ramp.corner_depots
         # Uncomment the following if you want to build 3 supply depots in the wall instead of a barracks in the middle + 2 depots in the corner
         # depot_placement_positions = self.main_base_ramp.corner_depots | {self.main_base_ramp.depot_in_middle}
 
@@ -85,7 +84,7 @@ class RampWallBot(BotAI):
 
         # Filter locations close to finished supply depots
         if depots:
-            depot_placement_positions: Set[Point2] = {
+            depot_placement_positions: set[Point2] = {
                 d for d in depot_placement_positions if depots.closest_distance_to(d) > 1
             }
 

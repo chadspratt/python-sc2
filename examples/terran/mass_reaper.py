@@ -7,7 +7,6 @@ Bot made by Burny
 """
 
 import random
-from typing import Set
 
 from sc2 import maps
 from sc2.bot_ai import BotAI
@@ -165,11 +164,11 @@ class MassReaperBot(BotAI):
             )  # Threats that can attack the reaper
 
             if r.health_percentage < 2 / 5 and enemy_threats_close:
-                retreat_points: Set[Point2] = self.neighbors8(r.position, distance=2) | self.neighbors8(
+                retreat_points: set[Point2] = self.neighbors8(r.position, distance=2) | self.neighbors8(
                     r.position, distance=4
                 )
                 # Filter points that are pathable
-                retreat_points: Set[Point2] = {x for x in retreat_points if self.in_pathing_grid(x)}
+                retreat_points: set[Point2] = {x for x in retreat_points if self.in_pathing_grid(x)}
                 if retreat_points:
                     closest_enemy: Unit = enemy_threats_close.closest_to(r)
                     retreat_point: Unit = closest_enemy.position.furthest(retreat_points)
@@ -218,11 +217,11 @@ class MassReaperBot(BotAI):
             )  # Hardcoded attackrange minus 0.5
             # Threats that can attack the reaper
             if r.weapon_cooldown != 0 and enemy_threats_very_close:
-                retreat_points: Set[Point2] = self.neighbors8(r.position, distance=2) | self.neighbors8(
+                retreat_points: set[Point2] = self.neighbors8(r.position, distance=2) | self.neighbors8(
                     r.position, distance=4
                 )
                 # Filter points that are pathable by a reaper
-                retreat_points: Set[Point2] = {x for x in retreat_points if self.in_pathing_grid(x)}
+                retreat_points: set[Point2] = {x for x in retreat_points if self.in_pathing_grid(x)}
                 if retreat_points:
                     closest_enemy: Unit = enemy_threats_very_close.closest_to(r)
                     retreat_point: Point2 = max(
@@ -264,13 +263,13 @@ class MassReaperBot(BotAI):
     # Stolen and modified from position.py
 
     @staticmethod
-    def neighbors4(position, distance=1) -> Set[Point2]:
+    def neighbors4(position, distance=1) -> set[Point2]:
         p = position
         d = distance
         return {Point2((p.x - d, p.y)), Point2((p.x + d, p.y)), Point2((p.x, p.y - d)), Point2((p.x, p.y + d))}
 
     # Stolen and modified from position.py
-    def neighbors8(self, position, distance=1) -> Set[Point2]:
+    def neighbors8(self, position, distance=1) -> set[Point2]:
         p = position
         d = distance
         return self.neighbors4(position, distance) | {

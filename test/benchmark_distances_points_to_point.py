@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import math
 import random
-from typing import List, Tuple
 
 import numpy as np
 from scipy.spatial.distance import cdist
@@ -110,8 +111,8 @@ amount = 50
 min_value = 0
 max_value = 250
 
-point: Tuple[float, float] = (random.uniform(min_value, max_value), random.uniform(min_value, max_value))
-units: List[Tuple[float, float]] = [
+point: tuple[float, float] = (random.uniform(min_value, max_value), random.uniform(min_value, max_value))
+units: list[tuple[float, float]] = [
     (random.uniform(min_value, max_value), random.uniform(min_value, max_value)) for _ in range(amount)
 ]
 

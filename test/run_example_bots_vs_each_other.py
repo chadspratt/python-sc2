@@ -2,6 +2,8 @@
 This script makes sure to run all bots in the examples folder to check if they can launch against each other.
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -9,7 +11,6 @@ sys.path.append(Path(__file__).parent)
 import asyncio
 from importlib import import_module
 from itertools import combinations
-from typing import List, Type
 
 from loguru import logger
 
@@ -94,7 +95,7 @@ bot_infos = [
     },
 ]
 
-matches: List[GameMatch] = []
+matches: list[GameMatch] = []
 
 # Run bots against each other
 for bot_info1, bot_info2 in combinations(bot_infos, 2):
@@ -102,13 +103,13 @@ for bot_info1, bot_info2 in combinations(bot_infos, 2):
     bot_path: str = bot_info1["path"]
     bot_class_name: str = bot_info1["bot_class_name"]
     module = import_module(bot_path)
-    bot_class1: Type[BotAI] = getattr(module, bot_class_name)
+    bot_class1: type[BotAI] = getattr(module, bot_class_name)
 
     bot_race2: Race = bot_info2["race"]
     bot_path: str = bot_info2["path"]
     bot_class_name: str = bot_info2["bot_class_name"]
     module = import_module(bot_path)
-    bot_class2: Type[BotAI] = getattr(module, bot_class_name)
+    bot_class2: type[BotAI] = getattr(module, bot_class_name)
 
     for realtime in [True, False]:
         matches.append(

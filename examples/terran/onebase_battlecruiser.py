@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from __future__ import annotations
+
 
 from sc2 import maps
 from sc2.bot_ai import BotAI
@@ -13,7 +14,7 @@ from sc2.units import Units
 
 
 class BCRushBot(BotAI):
-    def select_target(self) -> Tuple[Point2, bool]:
+    def select_target(self) -> tuple[Point2, bool]:
         """Select an enemy target the units should attack."""
         targets: Units = self.enemy_structures
         if targets:
@@ -111,7 +112,7 @@ class BCRushBot(BotAI):
                             near=cc.position.towards(self.game_info.map_center, 15).random_on_distance(8),
                         )
 
-        def starport_points_to_build_addon(sp_position: Point2) -> List[Point2]:
+        def starport_points_to_build_addon(sp_position: Point2) -> list[Point2]:
             """Return all points that need to be checked when trying to build an addon. Returns 4 points."""
             addon_offset: Point2 = Point2((2.5, -0.5))
             addon_position: Point2 = sp_position + addon_offset
@@ -135,7 +136,7 @@ class BCRushBot(BotAI):
                 else:
                     sp(AbilityId.LIFT)
 
-        def starport_land_positions(sp_position: Point2) -> List[Point2]:
+        def starport_land_positions(sp_position: Point2) -> list[Point2]:
             """Return all points that need to be checked when trying to land at a location where there is enough space to build an addon. Returns 13 points."""
             land_positions = [(sp_position + Point2((x, y))).rounded for x in range(-1, 2) for y in range(-1, 2)]
             return land_positions + starport_points_to_build_addon(sp_position)
@@ -149,7 +150,7 @@ class BCRushBot(BotAI):
             offset_point: Point2 = Point2((-0.5, -0.5))
             possible_land_positions = (sp.position.rounded + offset_point + p for p in possible_land_positions_offset)
             for target_land_position in possible_land_positions:
-                land_and_addon_points: List[Point2] = starport_land_positions(target_land_position)
+                land_and_addon_points: list[Point2] = starport_land_positions(target_land_position)
                 if all(
                     self.in_map_bounds(land_pos) and self.in_placement_grid(land_pos) and self.in_pathing_grid(land_pos)
                     for land_pos in land_and_addon_points

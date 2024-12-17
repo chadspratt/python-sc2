@@ -20,8 +20,6 @@ Improvements that could be made:
 - Split marines before engaging
 """
 
-from typing import Union
-
 from loguru import logger
 
 from sc2 import maps
@@ -96,7 +94,7 @@ class MarineSplitChallenge(BotAI):
 
     def position_around_unit(
         self,
-        pos: Union[Unit, Point2, Point3],
+        pos: Unit | Point2 | Point3,
         distance: int = 1,
         step_size: int = 1,
         exclude_out_of_bounds: bool = True,

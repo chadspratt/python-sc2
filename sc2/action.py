@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import groupby
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from s2clientprotocol import raw_pb2 as raw_pb
 
@@ -26,7 +26,7 @@ def combine_actions(action_iter):
     """
     for key, items in groupby(action_iter, key=lambda a: a.combining_tuple):
         ability: AbilityId
-        target: Union[None, Point2, Unit]
+        target: None | Point2 | Unit
         queue: bool
         # See constants.py for combineable abilities
         combineable: bool

@@ -6,7 +6,7 @@ If it works, you can watch replays with it.
 # pylint: disable=W0201,W0212
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING
 
 from sc2.bot_ai_internal import BotAIInternal
 from sc2.data import Alert, Result
@@ -101,13 +101,13 @@ class ObserverAI(BotAIInternal):
         return self.game_info.player_start_location
 
     @property
-    def enemy_start_locations(self) -> List[Point2]:
+    def enemy_start_locations(self) -> list[Point2]:
         """Possible start locations for enemies."""
         return self.game_info.start_locations
 
     async def get_available_abilities(
-        self, units: Union[List[Unit], Units], ignore_resource_requirements: bool = False
-    ) -> List[List[AbilityId]]:
+        self, units: list[Unit] | Units, ignore_resource_requirements: bool = False
+    ) -> list[list[AbilityId]]:
         """Returns available abilities of one or more units. Right now only checks cooldown, energy cost, and whether the ability has been researched.
 
         Examples::

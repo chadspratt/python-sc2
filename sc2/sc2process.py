@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import os
 import os.path
@@ -9,7 +11,7 @@ import tempfile
 import time
 from contextlib import suppress
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import aiohttp
 import portpicker
@@ -22,7 +24,7 @@ from sc2.versions import VERSIONS
 
 
 class KillSwitch:
-    _to_kill: List[Any] = []
+    _to_kill: list[Any] = []
 
     @classmethod
     def add(cls, value):
@@ -55,11 +57,11 @@ class SC2Process:
 
     def __init__(
         self,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
+        host: str | None = None,
+        port: int | None = None,
         fullscreen: bool = False,
-        resolution: Optional[Union[List[int], Tuple[int, int]]] = None,
-        placement: Optional[Union[List[int], Tuple[int, int]]] = None,
+        resolution: list[int] | tuple[int, int] | None = None,
+        placement: list[int] | tuple[int, int] | None = None,
         render: bool = False,
         sc2_version: str = None,
         base_build: str = None,
@@ -69,7 +71,7 @@ class SC2Process:
         assert isinstance(port, int) or port is None
 
         self._render = render
-        self._arguments: Dict[str, str] = {"-displayMode": str(int(fullscreen))}
+        self._arguments: dict[str, str] = {"-displayMode": str(int(fullscreen))}
         if not fullscreen:
             if resolution and len(resolution) == 2:
                 self._arguments["-windowwidth"] = str(resolution[0])
@@ -129,7 +131,7 @@ class SC2Process:
         https://github.com/Blizzard/s2client-proto/blob/master/buildinfo/versions.json"""
         return VERSIONS
 
-    def find_data_hash(self, target_sc2_version: str) -> Optional[str]:
+    def find_data_hash(self, target_sc2_version: str) -> str | None:
         """Returns the data hash from the matching version string."""
         version: dict
         for version in self.versions:

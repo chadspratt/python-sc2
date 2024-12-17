@@ -8,8 +8,8 @@ import warnings
 from abc import ABC
 from collections import Counter
 from contextlib import suppress
-from typing import TYPE_CHECKING, Any, Dict, Generator, Iterable, List, Set, Tuple, Union, final
-from typing import Counter as CounterType
+from typing import TYPE_CHECKING, Any, final
+from collections.abc import Generator, Iterable
 
 import numpy as np
 from loguru import logger
@@ -53,7 +53,7 @@ class BotAIInternal(ABC):
     @final
     def _initialize_variables(self):
         """Called from main.py internally"""
-        self.cache: Dict[str, Any] = {}
+        self.cache: dict[str, Any] = {}
         # Specific opponent bot ID used in sc2ai ladder games http://sc2ai.net/ and on ai arena https://aiarena.net
         # The bot ID will stay the same each game so your bot can "adapt" to the opponent
         if not hasattr(self, "opponent_id"):
@@ -86,8 +86,8 @@ class BotAIInternal(ABC):
         self.mineral_field: Units = Units([], self)
         self.vespene_geyser: Units = Units([], self)
         self.placeholders: Units = Units([], self)
-        self.techlab_tags: Set[int] = set()
-        self.reactor_tags: Set[int] = set()
+        self.techlab_tags: set[int] = set()
+        self.reactor_tags: set[int] = set()
         self.minerals: int = 50
         self.vespene: int = 0
         self.supply_army: float = 0
@@ -98,21 +98,21 @@ class BotAIInternal(ABC):
         self.idle_worker_count: int = 0
         self.army_count: int = 0
         self.warp_gate_count: int = 0
-        self.actions: List[UnitCommand] = []
-        self.blips: Set[Blip] = set()
+        self.actions: list[UnitCommand] = []
+        self.blips: set[Blip] = set()
         self.race: Race = None
         self.enemy_race: Race = None
         self._generated_frame = -100
         self._units_created: Counter = Counter()
-        self._unit_tags_seen_this_game: Set[int] = set()
-        self._units_previous_map: Dict[int, Unit] = {}
-        self._structures_previous_map: Dict[int, Unit] = {}
-        self._enemy_units_previous_map: Dict[int, Unit] = {}
-        self._enemy_structures_previous_map: Dict[int, Unit] = {}
-        self._all_units_previous_map: Dict[int, Unit] = {}
-        self._previous_upgrades: Set[UpgradeId] = set()
-        self._expansion_positions_list: List[Point2] = []
-        self._resource_location_to_expansion_position_dict: Dict[Point2, Point2] = {}
+        self._unit_tags_seen_this_game: set[int] = set()
+        self._units_previous_map: dict[int, Unit] = {}
+        self._structures_previous_map: dict[int, Unit] = {}
+        self._enemy_units_previous_map: dict[int, Unit] = {}
+        self._enemy_structures_previous_map: dict[int, Unit] = {}
+        self._all_units_previous_map: dict[int, Unit] = {}
+        self._previous_upgrades: set[UpgradeId] = set()
+        self._expansion_positions_list: list[Point2] = []
+        self._resource_location_to_expansion_position_dict: dict[Point2, Point2] = {}
         self._time_before_step: float = None
         self._time_after_step: float = None
         self._min_step_time: float = math.inf
@@ -121,7 +121,7 @@ class BotAIInternal(ABC):
         self._total_time_in_on_step: float = 0
         self._total_steps_iterations: int = 0
         # Internally used to keep track which units received an action in this frame, so that self.train() function does not give the same larva two orders - cleared every frame
-        self.unit_tags_received_action: Set[int] = set()
+        self.unit_tags_received_action: set[int] = set()
 
     @final
     @property
@@ -158,7 +158,7 @@ class BotAIInternal(ABC):
 
     @final
     @property_cache_once_per_frame
-    def expansion_locations(self) -> Dict[Point2, Units]:
+    def expansion_locations(self) -> dict[Point2, Units]:
         """Same as the function above."""
         assert self._expansion_positions_list, "self._find_expansion_locations() has not been run yet, so accessing the list of expansion locations is pointless."
         warnings.warn(
@@ -177,7 +177,7 @@ class BotAIInternal(ABC):
         # Distance we group resources by
         resource_spread_threshold: float = 8.5
         # Create a group for every resource
-        resource_groups: List[List[Unit]] = [
+        resource_groups: list[list[Unit]] = [
             [resource]
             for resource in self.resources
             if resource.name != "MineralField450"  # dont use low mineral count patches
@@ -267,11 +267,11 @@ class BotAIInternal(ABC):
 
     @final
     @property_cache_once_per_frame
-    def _abilities_count_and_build_progress(self) -> Tuple[CounterType[AbilityId], Dict[AbilityId, float]]:
+    def _abilities_count_and_build_progress(self) -> tuple[Counter[AbilityId], dict[AbilityId, float]]:
         """Cache for the already_pending function, includes protoss units warping in,
         all units in production and all structures, and all morphs"""
-        abilities_amount: CounterType[AbilityId] = Counter()
-        max_build_progress: Dict[AbilityId, float] = {}
+        abilities_amount: Counter[AbilityId] = Counter()
+        max_build_progress: dict[AbilityId, float] = {}
         unit: Unit
         for unit in self.units + self.structures:
             for order in unit.orders:
@@ -299,10 +299,10 @@ class BotAIInternal(ABC):
 
     @final
     @property_cache_once_per_frame
-    def _worker_orders(self) -> CounterType[AbilityId]:
+    def _worker_orders(self) -> Counter[AbilityId]:
         """This function is used internally, do not use! It is to store all worker abilities."""
-        abilities_amount: CounterType[AbilityId] = Counter()
-        structures_in_production: Set[Union[Point2, int]] = set()
+        abilities_amount: Counter[AbilityId] = Counter()
+        structures_in_production: set[Point2 | int] = set()
         for structure in self.structures:
             if structure.type_id in TERRAN_STRUCTURES_REQUIRE_SCV:
                 structures_in_production.add(structure.position)
@@ -410,7 +410,7 @@ class BotAIInternal(ABC):
         return r
 
     @final
-    async def _do_actions(self, actions: List[UnitCommand], prevent_double: bool = True):
+    async def _do_actions(self, actions: list[UnitCommand], prevent_double: bool = True):
         """Used internally by main.py automatically, use self.do() instead!
 
         :param actions:
@@ -495,13 +495,13 @@ class BotAIInternal(ABC):
         # update pathing grid, which unfortunately is in GameInfo instead of GameState
         self.game_info.pathing_grid = PixelMap(proto_game_info.game_info.start_raw.pathing_grid, in_bits=True)
         # Required for events, needs to be before self.units are initialized so the old units are stored
-        self._units_previous_map: Dict[int, Unit] = {unit.tag: unit for unit in self.units}
-        self._structures_previous_map: Dict[int, Unit] = {structure.tag: structure for structure in self.structures}
-        self._enemy_units_previous_map: Dict[int, Unit] = {unit.tag: unit for unit in self.enemy_units}
-        self._enemy_structures_previous_map: Dict[int, Unit] = {
+        self._units_previous_map: dict[int, Unit] = {unit.tag: unit for unit in self.units}
+        self._structures_previous_map: dict[int, Unit] = {structure.tag: structure for structure in self.structures}
+        self._enemy_units_previous_map: dict[int, Unit] = {unit.tag: unit for unit in self.enemy_units}
+        self._enemy_structures_previous_map: dict[int, Unit] = {
             structure.tag: structure for structure in self.enemy_structures
         }
-        self._all_units_previous_map: Dict[int, Unit] = {unit.tag: unit for unit in self.all_units}
+        self._all_units_previous_map: dict[int, Unit] = {unit.tag: unit for unit in self.all_units}
 
         self._prepare_units()
         self.minerals: int = state.common.minerals
@@ -528,7 +528,7 @@ class BotAIInternal(ABC):
     @final
     def _prepare_units(self):
         # Set of enemy units detected by own sensor tower, as blips have less unit information than normal visible units
-        self.blips: Set[Blip] = set()
+        self.blips: set[Blip] = set()
         self.all_units: Units = Units([], self)
         self.units: Units = Units([], self)
         self.workers: Units = Units([], self)
@@ -546,10 +546,10 @@ class BotAIInternal(ABC):
         self.mineral_field: Units = Units([], self)
         self.vespene_geyser: Units = Units([], self)
         self.placeholders: Units = Units([], self)
-        self.techlab_tags: Set[int] = set()
-        self.reactor_tags: Set[int] = set()
+        self.techlab_tags: set[int] = set()
+        self.reactor_tags: set[int] = set()
 
-        worker_types: Set[UnitTypeId] = {UnitTypeId.DRONE, UnitTypeId.DRONEBURROWED, UnitTypeId.SCV, UnitTypeId.PROBE}
+        worker_types: set[UnitTypeId] = {UnitTypeId.DRONE, UnitTypeId.DRONEBURROWED, UnitTypeId.SCV, UnitTypeId.PROBE}
 
         index: int = 0
         for unit in self.state.observation_raw.units:
@@ -746,10 +746,10 @@ class BotAIInternal(ABC):
                 await self.on_enemy_unit_entered_vision(enemy_structure)
 
         # Call events for enemy unit left vision
-        enemy_units_left_vision: Set[int] = set(self._enemy_units_previous_map) - self.enemy_units.tags
+        enemy_units_left_vision: set[int] = set(self._enemy_units_previous_map) - self.enemy_units.tags
         for enemy_unit_tag in enemy_units_left_vision:
             await self.on_enemy_unit_left_vision(enemy_unit_tag)
-        enemy_structures_left_vision: Set[int] = set(self._enemy_structures_previous_map) - self.enemy_structures.tags
+        enemy_structures_left_vision: set[int] = set(self._enemy_structures_previous_map) - self.enemy_structures.tags
         for enemy_structure_tag in enemy_structures_left_vision:
             await self.on_enemy_unit_left_vision(enemy_structure_tag)
 
@@ -843,7 +843,7 @@ class BotAIInternal(ABC):
 
     @final
     @staticmethod
-    def convert_tuple_to_numpy_array(pos: Tuple[float, float]) -> np.ndarray:
+    def convert_tuple_to_numpy_array(pos: tuple[float, float]) -> np.ndarray:
         """Converts a single position to a 2d numpy array with 1 row and 2 columns."""
         return np.fromiter(pos, dtype=float, count=2).reshape((1, 2))
 
@@ -852,16 +852,16 @@ class BotAIInternal(ABC):
     @final
     @staticmethod
     def distance_math_hypot(
-        p1: Union[Tuple[float, float], Point2],
-        p2: Union[Tuple[float, float], Point2],
+        p1: tuple[float, float] | Point2,
+        p2: tuple[float, float] | Point2,
     ) -> float:
         return math.hypot(p1[0] - p2[0], p1[1] - p2[1])
 
     @final
     @staticmethod
     def distance_math_hypot_squared(
-        p1: Union[Tuple[float, float], Point2],
-        p2: Union[Tuple[float, float], Point2],
+        p1: tuple[float, float] | Point2,
+        p2: tuple[float, float] | Point2,
     ) -> float:
         return pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2)
 
@@ -894,8 +894,8 @@ class BotAIInternal(ABC):
     @final
     def _distance_pos_to_pos(
         self,
-        pos1: Union[Tuple[float, float], Point2],
-        pos2: Union[Tuple[float, float], Point2],
+        pos1: tuple[float, float] | Point2,
+        pos2: tuple[float, float] | Point2,
     ) -> float:
         return self.distance_math_hypot(pos1, pos2)
 
@@ -903,7 +903,7 @@ class BotAIInternal(ABC):
     def _distance_units_to_pos(
         self,
         units: Units,
-        pos: Union[Tuple[float, float], Point2],
+        pos: tuple[float, float] | Point2,
     ) -> Generator[float, None, None]:
         """This function does not scale well, if len(units) > 100 it gets fairly slow"""
         return (self.distance_math_hypot(u.position_tuple, pos) for u in units)
@@ -912,7 +912,7 @@ class BotAIInternal(ABC):
     def _distance_unit_to_points(
         self,
         unit: Unit,
-        points: Iterable[Tuple[float, float]],
+        points: Iterable[tuple[float, float]],
     ) -> Generator[float, None, None]:
         """This function does not scale well, if len(points) > 100 it gets fairly slow"""
         pos = unit.position_tuple
