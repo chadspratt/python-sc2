@@ -30,7 +30,7 @@ class ExpiringDict(OrderedDict):
                     print("test is not anymore in dict")
     """
 
-    def __init__(self, bot: BotAI, max_age_frames: int = 1):
+    def __init__(self, bot: BotAI, max_age_frames: int = 1) -> None:
         assert max_age_frames >= -1
         assert bot
 
@@ -54,7 +54,7 @@ class ExpiringDict(OrderedDict):
                 del self[key]
         return False
 
-    def __getitem__(self, key, with_age=False) -> Any:
+    def __getitem__(self, key, with_age: bool = False) -> Any:
         """Return the item of the dict using d[key]"""
         with self.lock:
             # Each item is a list of [value, frame time]
@@ -66,12 +66,12 @@ class ExpiringDict(OrderedDict):
             OrderedDict.__delitem__(self, key)
         raise KeyError(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         """Set d[key] = value"""
         with self.lock:
             OrderedDict.__setitem__(self, key, (value, self.frame))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Printable version of the dict instead of getting memory adress"""
         print_list = []
         with self.lock:
@@ -90,7 +90,7 @@ class ExpiringDict(OrderedDict):
             return self.keys()
 
     # TODO find a way to improve len
-    def __len__(self):
+    def __len__(self) -> int:
         """Override len method as key value pairs aren't instantly being deleted, but only on __get__(item).
         This function is slow because it has to check if each element is not expired yet."""
         with self.lock:
@@ -99,7 +99,7 @@ class ExpiringDict(OrderedDict):
                 count += 1
             return count
 
-    def pop(self, key, default=None, with_age=False):
+    def pop(self, key, default=None, with_age: bool = False):
         """Return the item and remove it"""
         with self.lock:
             if OrderedDict.__contains__(self, key):
@@ -116,7 +116,7 @@ class ExpiringDict(OrderedDict):
                 return default, self.frame
             return default
 
-    def get(self, key, default=None, with_age=False):
+    def get(self, key, default=None, with_age: bool = False):
         """Return the value for key if key is in dict, else default"""
         with self.lock:
             if OrderedDict.__contains__(self, key):
@@ -132,7 +132,7 @@ class ExpiringDict(OrderedDict):
             return None
         return None
 
-    def update(self, other_dict: dict):
+    def update(self, other_dict: dict) -> None:
         with self.lock:
             for key, value in other_dict.items():
                 self[key] = value

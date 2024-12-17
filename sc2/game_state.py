@@ -24,7 +24,7 @@ except ImportError:
 
 
 class Blip:
-    def __init__(self, proto):
+    def __init__(self, proto) -> None:
         """
         :param proto:
         """
@@ -81,16 +81,16 @@ class Common:
         "larva_count",
     ]
 
-    def __init__(self, proto):
+    def __init__(self, proto) -> None:
         self._proto = proto
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr) -> int:
         assert attr in self.ATTRIBUTES, f"'{attr}' is not a valid attribute"
         return int(getattr(self._proto, attr))
 
 
 class EffectData:
-    def __init__(self, proto, fake=False):
+    def __init__(self, proto, fake: bool = False) -> None:
         """
         :param proto:
         :param fake:
@@ -190,7 +190,7 @@ class ActionError(AbilityLookupTemplateClass):
 
 
 class GameState:
-    def __init__(self, response_observation, previous_observation=None):
+    def __init__(self, response_observation, previous_observation=None) -> None:
         """
         :param response_observation:
         :param previous_observation:

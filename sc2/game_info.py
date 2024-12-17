@@ -217,7 +217,7 @@ class Ramp:
 
 
 class GameInfo:
-    def __init__(self, proto):
+    def __init__(self, proto) -> None:
         self._proto = proto
         self.players: list[Player] = [Player.from_proto(p) for p in self._proto.player_info]
         self.map_name: str = self._proto.map_name

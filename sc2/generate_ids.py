@@ -9,6 +9,7 @@ from loguru import logger
 
 from sc2.game_data import AbilityData, GameData, UnitTypeData, UpgradeData
 from sc2.ids.ability_id import AbilityId
+from typing import Any
 
 try:
     from sc2.ids.id_version import ID_VERSION_STRING
@@ -17,7 +18,7 @@ except ImportError:
 
 
 class IdGenerator:
-    def __init__(self, game_data: GameData = None, game_version: str = None, verbose: bool = False):
+    def __init__(self, game_data: GameData = None, game_version: str = None, verbose: bool = False) -> None:
         self.game_data: GameData = game_data
         self.game_version = game_version
         self.verbose = verbose
@@ -50,13 +51,13 @@ class IdGenerator:
         }
 
     @staticmethod
-    def make_key(key):
+    def make_key(key: str) -> str:
         if key[0].isdigit():
             key = "_" + key
         # In patch 5.0, the key has "@" character in it which is not possible with python enums
         return key.upper().replace(" ", "_").replace("@", "")
 
-    def parse_data(self, data):
+    def parse_data(self, data) -> dict[str, Any]:
         # for d in data:  # Units, Abilities, Upgrades, Buffs, Effects
 
         units = self.parse_simple("Units", data)
@@ -129,7 +130,7 @@ class IdGenerator:
 
         return units
 
-    def generate_python_code(self, enums):
+    def generate_python_code(self, enums) -> None:
         assert {"Units", "Abilities", "Upgrades", "Buffs", "Effects"} <= enums.keys()
 
         sc2dir = Path(__file__).parent
@@ -183,7 +184,7 @@ for item in {class_name}:
             with Path(version_path).open("w") as f:
                 f.write(f'ID_VERSION_STRING = "{self.game_version}"\n')
 
-    def update_ids_from_stableid_json(self):
+    def update_ids_from_stableid_json(self) -> None:
         if self.game_version is None or ID_VERSION_STRING is None or self.game_version != ID_VERSION_STRING:
             if self.verbose and self.game_version is not None and ID_VERSION_STRING is not None:
                 logger.info(
@@ -201,7 +202,7 @@ for item in {class_name}:
                 self.update_game_data()
 
     @staticmethod
-    def reimport_ids():
+    def reimport_ids() -> None:
         # Reload the newly written "id" files
         # TODO This only re-imports modules, but if they haven't been imported, it will yield an error
         importlib.reload(sys.modules["sc2.ids.ability_id"])
@@ -218,7 +219,7 @@ for item in {class_name}:
 
         importlib.reload(sys.modules["sc2.constants"])
 
-    def update_game_data(self):
+    def update_game_data(self) -> None:
         """Re-generate the dicts from self.game_data.
         This should be done after the ids have been reimported."""
         ids = {a.value for a in AbilityId if a.value != 0}

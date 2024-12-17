@@ -21,18 +21,19 @@ from sc2 import paths, wsl
 from sc2.controller import Controller
 from sc2.paths import Paths
 from sc2.versions import VERSIONS
+from aiohttp.client_ws import ClientWebSocketResponse
 
 
 class KillSwitch:
     _to_kill: list[Any] = []
 
     @classmethod
-    def add(cls, value):
+    def add(cls, value) -> None:
         logger.debug("kill_switch: Add switch")
         cls._to_kill.append(value)
 
     @classmethod
-    def kill_all(cls):
+    def kill_all(cls) -> None:
         logger.info(f"kill_switch: Process cleanup for {len(cls._to_kill)} processes")
         for p in cls._to_kill:
             # pylint: disable=W0212
@@ -116,13 +117,13 @@ class SC2Process:
 
         return Controller(self._ws, self)
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args) -> None:
         await self._close_connection()
         KillSwitch.kill_all()
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     @property
-    def ws_url(self):
+    def ws_url(self) -> str:
         return f"ws://{self._host}:{self._port}/sc2api"
 
     @property
@@ -201,7 +202,7 @@ class SC2Process:
             # , env=run_config.env
         )
 
-    async def _connect(self):
+    async def _connect(self) -> ClientWebSocketResponse:
         # How long it waits for SC2 to start (in seconds)
         for i in range(180):
             if self._process is None:
@@ -227,7 +228,7 @@ class SC2Process:
         logger.debug("Websocket connection to SC2 process timed out")
         raise TimeoutError("Websocket")
 
-    async def _close_connection(self):
+    async def _close_connection(self) -> None:
         logger.info(f"Closing connection at {self._port}...")
 
         if self._ws is not None:
@@ -237,7 +238,7 @@ class SC2Process:
             await self._session.close()
 
     # pylint: disable=R0912
-    def _clean(self, verbose=True):
+    def _clean(self, verbose: bool = True) -> None:
         if verbose:
             logger.info("Cleaning up...")
 

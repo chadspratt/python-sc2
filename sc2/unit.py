@@ -111,7 +111,7 @@ class Unit:
         bot_object: BotAI,
         distance_calculation_index: int = -1,
         base_build: int = -1,
-    ):
+    ) -> None:
         """
         :param proto_data:
         :param bot_object:

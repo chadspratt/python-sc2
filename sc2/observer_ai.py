@@ -122,7 +122,7 @@ class ObserverAI(BotAIInternal):
         :param ignore_resource_requirements:"""
         return await self.client.query_available_abilities(units, ignore_resource_requirements)
 
-    async def on_unit_destroyed(self, unit_tag: int):
+    async def on_unit_destroyed(self, unit_tag: int) -> None:
         """
         Override this in your bot class.
         This will event will be called when a unit (or structure, friendly or enemy) dies.
@@ -131,12 +131,12 @@ class ObserverAI(BotAIInternal):
         :param unit_tag:
         """
 
-    async def on_unit_created(self, unit: Unit):
+    async def on_unit_created(self, unit: Unit) -> None:
         """Override this in your bot class. This function is called when a unit is created.
 
         :param unit:"""
 
-    async def on_building_construction_started(self, unit: Unit):
+    async def on_building_construction_started(self, unit: Unit) -> None:
         """
         Override this in your bot class.
         This function is called when a building construction has started.
@@ -144,7 +144,7 @@ class ObserverAI(BotAIInternal):
         :param unit:
         """
 
-    async def on_building_construction_complete(self, unit: Unit):
+    async def on_building_construction_complete(self, unit: Unit) -> None:
         """
         Override this in your bot class. This function is called when a building
         construction is completed.
@@ -152,14 +152,14 @@ class ObserverAI(BotAIInternal):
         :param unit:
         """
 
-    async def on_upgrade_complete(self, upgrade: UpgradeId):
+    async def on_upgrade_complete(self, upgrade: UpgradeId) -> None:
         """
         Override this in your bot class. This function is called with the upgrade id of an upgrade that was not finished last step and is now.
 
         :param upgrade:
         """
 
-    async def on_start(self):
+    async def on_start(self) -> None:
         """
         Override this in your bot class. This function is called after "on_start".
         At this point, game_data, game_info and the first iteration of game_state (self.state) are available.
@@ -175,7 +175,7 @@ class ObserverAI(BotAIInternal):
         """
         raise NotImplementedError
 
-    async def on_end(self, game_result: Result):
+    async def on_end(self, game_result: Result) -> None:
         """Override this in your bot class. This function is called at the end of a game.
 
         :param game_result:"""

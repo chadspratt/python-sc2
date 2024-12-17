@@ -18,7 +18,7 @@ BASEDIR = {
     "WineLinux": "~/.wine/drive_c/Program Files (x86)/StarCraft II",
 }
 
-USERPATH = {
+USERPATH: dict[str, str | None] = {
     "Windows": "Documents\\StarCraft II\\ExecuteInfo.txt",
     "WSL1": "Documents/StarCraft II/ExecuteInfo.txt",
     "WSL2": "Documents/StarCraft II/ExecuteInfo.txt",
@@ -36,7 +36,7 @@ BINPATH = {
     "WineLinux": "SC2_x64.exe",
 }
 
-CWD = {
+CWD: dict[str, str | None] = {
     "Windows": "Support64",
     "WSL1": "Support64",
     "WSL2": "Support64",
@@ -80,7 +80,7 @@ def get_user_sc2_install():
     return None
 
 
-def get_env():
+def get_env() -> None:
     # TODO: Linux env conf from: https://github.com/deepmind/pysc2/blob/master/pysc2/run_configs/platforms.py
     return None
 

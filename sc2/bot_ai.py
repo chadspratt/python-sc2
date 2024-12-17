@@ -209,7 +209,9 @@ class BotAI(BotAIInternal):
         :param ignore_resource_requirements:"""
         return await self.client.query_available_abilities(units, ignore_resource_requirements)
 
-    async def expand_now(self, building: UnitTypeId = None, max_distance: int = 10, location: Point2 | None = None):
+    async def expand_now(
+        self, building: UnitTypeId = None, max_distance: int = 10, location: Point2 | None = None
+    ) -> None:
         """Finds the next possible expansion via 'self.get_next_expansion()'. If the target expansion is blocked (e.g. an enemy unit), it will misplace the expansion.
 
         :param building:
@@ -261,7 +263,7 @@ class BotAI(BotAIInternal):
         return closest
 
     # pylint: disable=R0912
-    async def distribute_workers(self, resource_ratio: float = 2):
+    async def distribute_workers(self, resource_ratio: float = 2) -> None:
         """
         Distributes workers across all the bases taken.
         Keyword `resource_ratio` takes a float. If the current minerals to gas
@@ -1152,7 +1154,7 @@ class BotAI(BotAIInternal):
                 return successful_action
         return False
 
-    async def chat_send(self, message: str, team_only: bool = False):
+    async def chat_send(self, message: str, team_only: bool = False) -> None:
         """Send a chat message to the SC2 Client.
 
         Example::
@@ -1230,7 +1232,7 @@ class BotAI(BotAIInternal):
         pos = pos.position.rounded
         return self.state.creep[pos] == 1
 
-    async def on_unit_destroyed(self, unit_tag: int):
+    async def on_unit_destroyed(self, unit_tag: int) -> None:
         """
         Override this in your bot class.
         Note that this function uses unit tags and not the unit objects
@@ -1241,12 +1243,12 @@ class BotAI(BotAIInternal):
         :param unit_tag:
         """
 
-    async def on_unit_created(self, unit: Unit):
+    async def on_unit_created(self, unit: Unit) -> None:
         """Override this in your bot class. This function is called when a unit is created.
 
         :param unit:"""
 
-    async def on_unit_type_changed(self, unit: Unit, previous_type: UnitTypeId):
+    async def on_unit_type_changed(self, unit: Unit, previous_type: UnitTypeId) -> None:
         """Override this in your bot class. This function is called when a unit type has changed. To get the current UnitTypeId of the unit, use 'unit.type_id'
 
         This may happen when a larva morphed to an egg, siege tank sieged, a zerg unit burrowed, a hatchery morphed to lair,
@@ -1260,7 +1262,7 @@ class BotAI(BotAIInternal):
         :param previous_type:
         """
 
-    async def on_building_construction_started(self, unit: Unit):
+    async def on_building_construction_started(self, unit: Unit) -> None:
         """
         Override this in your bot class.
         This function is called when a building construction has started.
@@ -1268,7 +1270,7 @@ class BotAI(BotAIInternal):
         :param unit:
         """
 
-    async def on_building_construction_complete(self, unit: Unit):
+    async def on_building_construction_complete(self, unit: Unit) -> None:
         """
         Override this in your bot class. This function is called when a building
         construction is completed.
@@ -1276,14 +1278,14 @@ class BotAI(BotAIInternal):
         :param unit:
         """
 
-    async def on_upgrade_complete(self, upgrade: UpgradeId):
+    async def on_upgrade_complete(self, upgrade: UpgradeId) -> None:
         """
         Override this in your bot class. This function is called with the upgrade id of an upgrade that was not finished last step and is now.
 
         :param upgrade:
         """
 
-    async def on_unit_took_damage(self, unit: Unit, amount_damage_taken: float):
+    async def on_unit_took_damage(self, unit: Unit, amount_damage_taken: float) -> None:
         """
         Override this in your bot class. This function is called when your own unit (unit or structure) took damage.
         It will not be called if the unit died this frame.
@@ -1300,14 +1302,14 @@ class BotAI(BotAIInternal):
         :param amount_damage_taken:
         """
 
-    async def on_enemy_unit_entered_vision(self, unit: Unit):
+    async def on_enemy_unit_entered_vision(self, unit: Unit) -> None:
         """
         Override this in your bot class. This function is called when an enemy unit (unit or structure) entered vision (which was not visible last frame).
 
         :param unit:
         """
 
-    async def on_enemy_unit_left_vision(self, unit_tag: int):
+    async def on_enemy_unit_left_vision(self, unit_tag: int) -> None:
         """
         Override this in your bot class. This function is called when an enemy unit (unit or structure) left vision (which was visible last frame).
         Same as the self.on_unit_destroyed event, this function is called with the unit's tag because the unit is no longer visible anymore.
@@ -1321,7 +1323,7 @@ class BotAI(BotAIInternal):
         :param unit_tag:
         """
 
-    async def on_before_start(self):
+    async def on_before_start(self) -> None:
         """
         Override this in your bot class. This function is called before "on_start"
         and before "prepare_first_step" that calculates expansion locations.
@@ -1329,7 +1331,7 @@ class BotAI(BotAIInternal):
         This function is useful in realtime=True mode to split your workers or start producing the first worker.
         """
 
-    async def on_start(self):
+    async def on_start(self) -> None:
         """
         Override this in your bot class.
         At this point, game_data, game_info and the first iteration of game_state (self.state) are available.
@@ -1345,7 +1347,7 @@ class BotAI(BotAIInternal):
         """
         raise NotImplementedError
 
-    async def on_end(self, game_result: Result):
+    async def on_end(self, game_result: Result) -> None:
         """Override this in your bot class. This function is called at the end of a game.
         Unsure if this function will be called on the laddermanager client as the bot process may forcefully be terminated.
 

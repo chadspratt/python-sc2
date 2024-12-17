@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class UnitCommand:
-    def __init__(self, ability: AbilityId, unit: Unit, target: Unit | Point2 = None, queue: bool = False):
+    def __init__(self, ability: AbilityId, unit: Unit, target: Unit | Point2 = None, queue: bool = False) -> None:
         """
         :param ability:
         :param unit:
@@ -37,5 +37,5 @@ class UnitCommand:
     def combining_tuple(self) -> tuple[AbilityId, Unit | Point2, bool, bool]:
         return self.ability, self.target, self.queue, self.ability in COMBINEABLE_ABILITIES
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"UnitCommand({self.ability}, {self.unit}, {self.target}, {self.queue})"

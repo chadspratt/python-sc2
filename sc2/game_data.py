@@ -20,7 +20,7 @@ FREE_ABILITIES = {"Lower", "Raise", "Land", "Lift", "Hold", "Harvest"}
 
 
 class GameData:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         """
         :param data:
         """
@@ -83,7 +83,7 @@ class AbilityData:
         i = bisect_left(cls.ability_ids, ability_id)  # quick binary search
         return i != len(cls.ability_ids) and cls.ability_ids[i] == ability_id
 
-    def __init__(self, game_data, proto):
+    def __init__(self, game_data, proto) -> None:
         self._game_data = game_data
         self._proto = proto
 
@@ -130,7 +130,7 @@ class AbilityData:
 
 
 class UnitTypeData:
-    def __init__(self, game_data: GameData, proto):
+    def __init__(self, game_data: GameData, proto) -> None:
         """
         :param game_data:
         :param proto:
@@ -273,7 +273,7 @@ class UnitTypeData:
 
 
 class UpgradeData:
-    def __init__(self, game_data: GameData, proto):
+    def __init__(self, game_data: GameData, proto) -> None:
         """
         :param game_data:
         :param proto:
@@ -281,7 +281,7 @@ class UpgradeData:
         self._game_data = game_data
         self._proto = proto
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"UpgradeData({self.name} - research ability: {self.research_ability}, {self.cost})"
 
     @property
@@ -324,7 +324,7 @@ class Cost:
     def __bool__(self) -> bool:
         return self.minerals != 0 or self.vespene != 0
 
-    def __add__(self, other) -> Cost:
+    def __add__(self, other: Cost) -> Cost:
         if not other:
             return self
         if not self:

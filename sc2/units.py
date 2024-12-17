@@ -19,11 +19,11 @@ class Units(list):
     """A collection of Unit objects. Makes it easy to select units by selectors."""
 
     @classmethod
-    def from_proto(cls, units, bot_object: BotAI):
+    def from_proto(cls, units, bot_object: BotAI) -> Units:
         # pylint: disable=E1120
         return cls(Unit(raw_unit, bot_object=bot_object) for raw_unit in units)
 
-    def __init__(self, units: Iterable[Unit], bot_object: BotAI):
+    def __init__(self, units: Iterable[Unit], bot_object: BotAI) -> None:
         """
         :param units:
         :param bot_object:
@@ -141,7 +141,7 @@ class Units(list):
         assert self, "Units object is empty"
         return random.choice(self)
 
-    def random_or(self, other: any) -> Unit:
+    def random_or(self, other: Any) -> Unit:
         return random.choice(self) if self else other
 
     def random_group_of(self, n: int) -> Units:

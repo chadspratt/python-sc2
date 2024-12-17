@@ -9,8 +9,14 @@ from sc2.data import AIBuild, Difficulty, PlayerType, Race
 
 class AbstractPlayer(ABC):
     def __init__(
-        self, p_type: PlayerType, race: Race = None, name: str = None, difficulty=None, ai_build=None, fullscreen=False
-    ):
+        self,
+        p_type: PlayerType,
+        race: Race = None,
+        name: str = None,
+        difficulty=None,
+        ai_build=None,
+        fullscreen: bool = False,
+    ) -> None:
         assert isinstance(p_type, PlayerType), f"p_type is of type {type(p_type)}"
         assert name is None or isinstance(name, str), f"name is of type {type(name)}"
 
@@ -38,22 +44,22 @@ class AbstractPlayer(ABC):
             assert ai_build is None
 
     @property
-    def needs_sc2(self):
+    def needs_sc2(self) -> bool:
         return not isinstance(self, Computer)
 
 
 class Human(AbstractPlayer):
-    def __init__(self, race, name=None, fullscreen=False):
+    def __init__(self, race, name: str | None = None, fullscreen: bool = False) -> None:
         super().__init__(PlayerType.Participant, race, name=name, fullscreen=fullscreen)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.name is not None:
             return f"Human({self.race._name_}, name={self.name !r})"
         return f"Human({self.race._name_})"
 
 
 class Bot(AbstractPlayer):
-    def __init__(self, race, ai, name=None, fullscreen=False):
+    def __init__(self, race, ai, name: str | None = None, fullscreen: bool = False) -> None:
         """
         AI can be None if this player object is just used to inform the
         server about player types.
@@ -62,36 +68,45 @@ class Bot(AbstractPlayer):
         super().__init__(PlayerType.Participant, race, name=name, fullscreen=fullscreen)
         self.ai = ai
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.name is not None:
             return f"Bot {self.ai.__class__.__name__}({self.race._name_}), name={self.name !r})"
         return f"Bot {self.ai.__class__.__name__}({self.race._name_})"
 
 
 class Computer(AbstractPlayer):
-    def __init__(self, race, difficulty=Difficulty.Easy, ai_build=AIBuild.RandomBuild):
+    def __init__(self, race, difficulty=Difficulty.Easy, ai_build=AIBuild.RandomBuild) -> None:
         super().__init__(PlayerType.Computer, race, difficulty=difficulty, ai_build=ai_build)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Computer {self.difficulty._name_}({self.race._name_}, {self.ai_build.name})"
 
 
 class Observer(AbstractPlayer):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(PlayerType.Observer)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Observer"
 
 
 class Player(AbstractPlayer):
-    def __init__(self, player_id, p_type, requested_race, difficulty=None, actual_race=None, name=None, ai_build=None):
+    def __init__(
+        self,
+        player_id: int,
+        p_type,
+        requested_race,
+        difficulty=None,
+        actual_race=None,
+        name: str | None = None,
+        ai_build=None,
+    ) -> None:
         super().__init__(p_type, requested_race, difficulty=difficulty, name=name, ai_build=ai_build)
         self.id: int = player_id
         self.actual_race: Race = actual_race
 
     @classmethod
-    def from_proto(cls, proto):
+    def from_proto(cls, proto) -> Player:
         if PlayerType(proto.type) == PlayerType.Observer:
             return cls(proto.player_id, PlayerType(proto.type), None, None, None)
         return cls(
@@ -128,14 +143,14 @@ class BotProcess(AbstractPlayer):
         path: str | Path,
         launch_list: list[str],
         race: Race,
-        name=None,
-        sc2port_arg="--GamePort",
-        hostaddress_arg="--LadderServer",
-        match_arg="--StartPort",
-        realtime_arg="--RealTime",
+        name: str | None = None,
+        sc2port_arg: str = "--GamePort",
+        hostaddress_arg: str = "--LadderServer",
+        match_arg: str = "--StartPort",
+        realtime_arg: str = "--RealTime",
         other_args: str = None,
         stdout: str = None,
-    ):
+    ) -> None:
         super().__init__(PlayerType.Participant, race, name=name)
         assert Path(path).exists()
         self.path = path
@@ -147,7 +162,7 @@ class BotProcess(AbstractPlayer):
         self.other_args = other_args
         self.stdout = stdout
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.name is not None:
             return f"Bot {self.name}({self.race.name} from {self.launch_list})"
         return f"Bot({self.race.name} from {self.launch_list})"

@@ -52,7 +52,7 @@ class GameMatch:
     sc2_config: list[dict] = None
     game_time_limit: int = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # avoid players sharing names
         if len(self.players) > 1 and self.players[0].name is not None and self.players[0].name == self.players[1].name:
             self.players[1].name += "2"
@@ -80,7 +80,7 @@ class GameMatch:
             "disable_fog": self.disable_fog,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         p1 = self.players[0]
         p1 = p1.name if p1.name else p1
         p2 = self.players[1]
@@ -226,7 +226,7 @@ async def _play_game(
     return result
 
 
-async def _play_replay(client, ai, realtime=False, player_id=0):
+async def _play_replay(client, ai, realtime: bool = False, player_id: int = 0):
     ai._initialize_variables()
 
     game_data = await client.get_game_data()
@@ -332,7 +332,7 @@ async def _setup_host_game(
 async def _host_game(
     map_settings,
     players,
-    realtime=False,
+    realtime: bool = False,
     portconfig=None,
     save_replay_as=None,
     game_time_limit=None,
@@ -489,7 +489,7 @@ def run_game(map_settings, players, **kwargs) -> Result | list[Result | None]:
     return result
 
 
-def run_replay(ai, replay_path, realtime=False, observed_id=0):
+def run_replay(ai, replay_path: Path | str, realtime: bool = False, observed_id: int = 0):
     portconfig = Portconfig()
     assert Path(replay_path).is_file(), f"Replay does not exist at the given path: {replay_path}"
     assert Path(
@@ -509,7 +509,7 @@ async def play_from_websocket(
     portconfig: Portconfig = None,
     save_replay_as=None,
     game_time_limit: int = None,
-    should_close=True,
+    should_close: bool = True,
 ):
     """Use this to play when the match is handled externally e.g. for bot ladder games.
     Portconfig MUST be specified if not playing vs Computer.
@@ -540,7 +540,7 @@ async def play_from_websocket(
     return result
 
 
-async def run_match(controllers: list[Controller], match: GameMatch, close_ws=True):
+async def run_match(controllers: list[Controller], match: GameMatch, close_ws: bool = True):
     await _setup_host_game(controllers[0], **match.host_game_kwargs)
 
     # Setup portconfig beforehand, so all players use the same ports
@@ -607,7 +607,7 @@ def process_results(players: list[AbstractPlayer], async_results: list[Result]) 
 
 
 # pylint: disable=R0912
-async def maintain_SCII_count(count: int, controllers: list[Controller], proc_args: list[dict] = None):
+async def maintain_SCII_count(count: int, controllers: list[Controller], proc_args: list[dict] = None) -> None:
     """Modifies the given list of controllers to reflect the desired amount of SCII processes"""
     # kill unhealthy ones.
     if controllers:

@@ -25,7 +25,7 @@ from sc2.units import Units
 
 # pylint: disable=R0904
 class Client(Protocol):
-    def __init__(self, ws, save_replay_path: str = None):
+    def __init__(self, ws, save_replay_path: str = None) -> None:
         """
         :param ws:
         """
@@ -101,7 +101,7 @@ class Client(Protocol):
         self._player_id = result.join_game.player_id
         return result.join_game.player_id
 
-    async def leave(self):
+    async def leave(self) -> None:
         """You can use 'await self.client.leave()' to surrender midst game."""
         is_resign = self._game_result is None
 
@@ -119,7 +119,7 @@ class Client(Protocol):
             if is_resign:
                 raise
 
-    async def save_replay(self, path):
+    async def save_replay(self, path) -> None:
         logger.debug("Requesting replay from server")
         result = await self._execute(save_replay=sc_pb.RequestSaveReplay())
         with Path(path).open("wb") as f:
@@ -161,7 +161,14 @@ class Client(Protocol):
         )
         return GameData(result.data)
 
-    async def dump_data(self, ability_id=True, unit_type_id=True, upgrade_id=True, buff_id=True, effect_id=True):
+    async def dump_data(
+        self,
+        ability_id: bool = True,
+        unit_type_id: bool = True,
+        upgrade_id: bool = True,
+        buff_id: bool = True,
+        effect_id: bool = True,
+    ) -> None:
         """
         Dump the game data files
         choose what data to dump in the keywords
@@ -185,7 +192,7 @@ class Client(Protocol):
         result = await self._execute(game_info=sc_pb.RequestGameInfo())
         return GameInfo(result.game_info)
 
-    async def actions(self, actions, return_successes=False):
+    async def actions(self, actions, return_successes: bool = False):
         if not actions:
             return None
         if not isinstance(actions, list):
@@ -320,7 +327,7 @@ class Client(Protocol):
         )
         return {b.unit_tag: {AbilityId(a.ability_id) for a in b.abilities} for b in result.query.abilities}
 
-    async def chat_send(self, message: str, team_only: bool):
+    async def chat_send(self, message: str, team_only: bool) -> None:
         """Writes a message to the chat"""
         ch = ChatChannel.Team if team_only else ChatChannel.Broadcast
         await self._execute(
@@ -329,7 +336,7 @@ class Client(Protocol):
             )
         )
 
-    async def toggle_autocast(self, units: list[Unit] | Units, ability: AbilityId):
+    async def toggle_autocast(self, units: list[Unit] | Units, ability: AbilityId) -> None:
         """Toggle autocast of all specified units
 
         :param units:
@@ -353,7 +360,7 @@ class Client(Protocol):
             )
         )
 
-    async def debug_create_unit(self, unit_spawn_commands: list[list[UnitTypeId | int | Point2 | Point3]]):
+    async def debug_create_unit(self, unit_spawn_commands: list[list[UnitTypeId | int | Point2 | Point3]]) -> None:
         """Usage example (will spawn 5 marines in the center of the map for player ID 1):
         await self._client.debug_create_unit([[UnitTypeId.MARINE, 5, self._game_info.map_center, 1]])
 
@@ -383,7 +390,7 @@ class Client(Protocol):
             )
         )
 
-    async def debug_kill_unit(self, unit_tags: Unit | Units | list[int] | set[int]):
+    async def debug_kill_unit(self, unit_tags: Unit | Units | list[int] | set[int]) -> None:
         """
         :param unit_tags:
         """
@@ -397,7 +404,7 @@ class Client(Protocol):
             debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(kill_unit=debug_pb.DebugKillUnit(tag=unit_tags))])
         )
 
-    async def move_camera(self, position: Unit | Units | Point2 | Point3):
+    async def move_camera(self, position: Unit | Units | Point2 | Point3) -> None:
         """Moves camera to the target position
 
         :param position:"""
@@ -418,7 +425,7 @@ class Client(Protocol):
             )
         )
 
-    async def obs_move_camera(self, position: Unit | Units | Point2 | Point3):
+    async def obs_move_camera(self, position: Unit | Units | Point2 | Point3) -> None:
         """Moves observer camera to the target position. Only works when observing (e.g. watching the replay).
 
         :param position:"""
@@ -435,7 +442,7 @@ class Client(Protocol):
             )
         )
 
-    async def move_camera_spatial(self, position: Point2 | Point3):
+    async def move_camera_spatial(self, position: Point2 | Point3) -> None:
         """Moves camera to the target position using the spatial aciton interface
 
         :param position:"""
@@ -447,7 +454,7 @@ class Client(Protocol):
         )
         await self._execute(action=sc_pb.RequestAction(actions=[action]))
 
-    def debug_text_simple(self, text: str):
+    def debug_text_simple(self, text: str) -> None:
         """Draws a text in the top left corner of the screen (up to a max of 6 messages fit there)."""
         self._debug_texts.append(DrawItemScreenText(text=text, color=None, start_point=Point2((0, 0)), font_size=8))
 
@@ -457,7 +464,7 @@ class Client(Protocol):
         pos: Point2 | Point3 | tuple | list,
         color: tuple | list | Point3 = None,
         size: int = 8,
-    ):
+    ) -> None:
         """
         Draws a text on the screen (monitor / game window) with coordinates 0 <= x, y <= 1.
 
@@ -481,7 +488,9 @@ class Client(Protocol):
     ):
         return self.debug_text_screen(text, pos, color, size)
 
-    def debug_text_world(self, text: str, pos: Unit | Point3, color: tuple | list | Point3 = None, size: int = 8):
+    def debug_text_world(
+        self, text: str, pos: Unit | Point3, color: tuple | list | Point3 = None, size: int = 8
+    ) -> None:
         """
         Draws a text at Point3 position in the game world.
         To grab a unit's 3d position, use unit.position3d
@@ -499,7 +508,7 @@ class Client(Protocol):
     def debug_text_3d(self, text: str, pos: Unit | Point3, color: tuple | list | Point3 = None, size: int = 8):
         return self.debug_text_world(text, pos, color, size)
 
-    def debug_line_out(self, p0: Unit | Point3, p1: Unit | Point3, color: tuple | list | Point3 = None):
+    def debug_line_out(self, p0: Unit | Point3, p1: Unit | Point3, color: tuple | list | Point3 = None) -> None:
         """
         Draws a line from p0 to p1.
 
@@ -520,7 +529,7 @@ class Client(Protocol):
         p_min: Unit | Point3,
         p_max: Unit | Point3,
         color: tuple | list | Point3 = None,
-    ):
+    ) -> None:
         """
         Draws a box with p_min and p_max as corners of the box.
 
@@ -541,7 +550,7 @@ class Client(Protocol):
         pos: Unit | Point3,
         half_vertex_length: float = 0.25,
         color: tuple | list | Point3 = None,
-    ):
+    ) -> None:
         """
         Draws a box center at a position 'pos', with box side lengths (vertices) of two times 'half_vertex_length'.
 
@@ -556,7 +565,7 @@ class Client(Protocol):
         p1 = pos + Point3((half_vertex_length, half_vertex_length, half_vertex_length))
         self._debug_boxes.append(DrawItemBox(start_point=p0, end_point=p1, color=color))
 
-    def debug_sphere_out(self, p: Unit | Point3, r: float, color: tuple | list | Point3 = None):
+    def debug_sphere_out(self, p: Unit | Point3, r: float, color: tuple | list | Point3 = None) -> None:
         """
         Draws a sphere at point p with radius r.
 
@@ -569,7 +578,7 @@ class Client(Protocol):
         assert isinstance(p, Point3)
         self._debug_spheres.append(DrawItemSphere(start_point=p, radius=r, color=color))
 
-    async def _send_debug(self):
+    async def _send_debug(self) -> None:
         """Sends the debug draw execution. This is run by main.py now automatically, if there is any items in the list. You do not need to run this manually any longer.
         Check examples/terran/ramp_wall.py for example drawing. Each draw request needs to be sent again in every single on_step iteration.
         """
@@ -625,10 +634,12 @@ class Client(Protocol):
             )
             self._debug_draw_last_frame = False
 
-    async def debug_leave(self):
+    async def debug_leave(self) -> None:
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(end_game=debug_pb.DebugEndGame())]))
 
-    async def debug_set_unit_value(self, unit_tags: Iterable[int] | Units | Unit, unit_value: int, value: float):
+    async def debug_set_unit_value(
+        self, unit_tags: Iterable[int] | Units | Unit, unit_value: int, value: float
+    ) -> None:
         """Sets a "unit value" (Energy, Life or Shields) of the given units to the given value.
         Can't set the life of a unit to 0, use "debug_kill_unit" for that. Also can't set the life above the unit's maximum.
         The following example sets the health of all your workers to 1:
@@ -659,7 +670,7 @@ class Client(Protocol):
             )
         )
 
-    async def debug_hang(self, delay_in_seconds: float):
+    async def debug_hang(self, delay_in_seconds: float) -> None:
         """Freezes the SC2 client. Not recommended to be used."""
         delay_in_ms = int(round(delay_in_seconds * 1000))
         await self._execute(
@@ -668,60 +679,60 @@ class Client(Protocol):
             )
         )
 
-    async def debug_show_map(self):
+    async def debug_show_map(self) -> None:
         """Reveals the whole map for the bot. Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=1)]))
 
-    async def debug_control_enemy(self):
+    async def debug_control_enemy(self) -> None:
         """Allows control over enemy units and structures similar to team games control - does not allow the bot to spend the opponent's ressources. Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=2)]))
 
-    async def debug_food(self):
+    async def debug_food(self) -> None:
         """Should disable food usage (does not seem to work?). Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=3)]))
 
-    async def debug_free(self):
+    async def debug_free(self) -> None:
         """Units, structures and upgrades are free of mineral and gas cost. Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=4)]))
 
-    async def debug_all_resources(self):
+    async def debug_all_resources(self) -> None:
         """Gives 5000 minerals and 5000 vespene to the bot."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=5)]))
 
-    async def debug_god(self):
+    async def debug_god(self) -> None:
         """Your units and structures no longer take any damage. Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=6)]))
 
-    async def debug_minerals(self):
+    async def debug_minerals(self) -> None:
         """Gives 5000 minerals to the bot."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=7)]))
 
-    async def debug_gas(self):
+    async def debug_gas(self) -> None:
         """Gives 5000 vespene to the bot. This does not seem to be working."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=8)]))
 
-    async def debug_cooldown(self):
+    async def debug_cooldown(self) -> None:
         """Disables cooldowns of unit abilities for the bot. Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=9)]))
 
-    async def debug_tech_tree(self):
+    async def debug_tech_tree(self) -> None:
         """Removes all tech requirements (e.g. can build a factory without having a barracks). Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=10)]))
 
-    async def debug_upgrade(self):
+    async def debug_upgrade(self) -> None:
         """Researches all currently available upgrades. E.g. using it once unlocks combat shield, stimpack and 1-1. Using it a second time unlocks 2-2 and all other upgrades stay researched."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=11)]))
 
-    async def debug_fast_build(self):
+    async def debug_fast_build(self) -> None:
         """Sets the build time of units and structures and upgrades to zero. Using it a second time disables it again."""
         await self._execute(debug=sc_pb.RequestDebug(debug=[debug_pb.DebugCommand(game_state=12)]))
 
-    async def quick_save(self):
+    async def quick_save(self) -> None:
         """Saves the current game state to an in-memory bookmark.
         See: https://github.com/Blizzard/s2client-proto/blob/eeaf5efaea2259d7b70247211dff98da0a2685a2/s2clientprotocol/sc2api.proto#L93"""
         await self._execute(quick_save=sc_pb.RequestQuickSave())
 
-    async def quick_load(self):
+    async def quick_load(self) -> None:
         """Loads the game state from the previously stored in-memory bookmark.
         Caution:
             - The SC2 Client will crash if the game wasn't quicksaved
@@ -752,7 +763,7 @@ class DrawItem:
 
 
 class DrawItemScreenText(DrawItem):
-    def __init__(self, start_point: Point2 = None, color: Point3 = None, text: str = "", font_size: int = 8):
+    def __init__(self, start_point: Point2 = None, color: Point3 = None, text: str = "", font_size: int = 8) -> None:
         self._start_point: Point2 = start_point
         self._color: Point3 = color
         self._text: str = text
@@ -767,12 +778,12 @@ class DrawItemScreenText(DrawItem):
             size=self._font_size,
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._start_point, self._color, self._text, self._font_size))
 
 
 class DrawItemWorldText(DrawItem):
-    def __init__(self, start_point: Point3 = None, color: Point3 = None, text: str = "", font_size: int = 8):
+    def __init__(self, start_point: Point3 = None, color: Point3 = None, text: str = "", font_size: int = 8) -> None:
         self._start_point: Point3 = start_point
         self._color: Point3 = color
         self._text: str = text
@@ -787,12 +798,12 @@ class DrawItemWorldText(DrawItem):
             size=self._font_size,
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._start_point, self._text, self._font_size, self._color))
 
 
 class DrawItemLine(DrawItem):
-    def __init__(self, start_point: Point3 = None, end_point: Point3 = None, color: Point3 = None):
+    def __init__(self, start_point: Point3 = None, end_point: Point3 = None, color: Point3 = None) -> None:
         self._start_point: Point3 = start_point
         self._end_point: Point3 = end_point
         self._color: Point3 = color
@@ -803,12 +814,12 @@ class DrawItemLine(DrawItem):
             color=self.to_debug_color(self._color),
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._start_point, self._end_point, self._color))
 
 
 class DrawItemBox(DrawItem):
-    def __init__(self, start_point: Point3 = None, end_point: Point3 = None, color: Point3 = None):
+    def __init__(self, start_point: Point3 = None, end_point: Point3 = None, color: Point3 = None) -> None:
         self._start_point: Point3 = start_point
         self._end_point: Point3 = end_point
         self._color: Point3 = color
@@ -820,12 +831,12 @@ class DrawItemBox(DrawItem):
             color=self.to_debug_color(self._color),
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._start_point, self._end_point, self._color))
 
 
 class DrawItemSphere(DrawItem):
-    def __init__(self, start_point: Point3 = None, radius: float = None, color: Point3 = None):
+    def __init__(self, start_point: Point3 = None, radius: float = None, color: Point3 = None) -> None:
         self._start_point: Point3 = start_point
         self._radius: float = radius
         self._color: Point3 = color
@@ -835,5 +846,5 @@ class DrawItemSphere(DrawItem):
             p=self._start_point.as_Point, r=self._radius, color=self.to_debug_color(self._color)
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._start_point, self._radius, self._color))

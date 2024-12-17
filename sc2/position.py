@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 import math
 import random
-from typing import TYPE_CHECKING
+from typing import SupportsFloat, SupportsIndex, TYPE_CHECKING
 from collections.abc import Iterable
 
 from s2clientprotocol import common_pb2 as common_pb
@@ -12,10 +12,10 @@ if TYPE_CHECKING:
     from sc2.unit import Unit
     from sc2.units import Units
 
-EPSILON = 10**-8
+EPSILON: float = 10**-8
 
 
-def _sign(num):
+def _sign(num: SupportsFloat | SupportsIndex) -> float:
     return math.copysign(1, num)
 
 
@@ -101,7 +101,7 @@ class Pointlike(tuple):
         """
         return self.__class__(a + b for a, b in itertools.zip_longest(self, p[: len(self)], fillvalue=0))
 
-    def unit_axes_towards(self, p):
+    def unit_axes_towards(self, p) -> Pointlike:
         """
 
         :param p:
@@ -128,13 +128,13 @@ class Pointlike(tuple):
             a + (b - a) / d * distance for a, b in itertools.zip_longest(self, p[: len(self)], fillvalue=0)
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         try:
             return all(abs(a - b) <= EPSILON for a, b in itertools.zip_longest(self, other, fillvalue=0))
         except TypeError:
             return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(tuple(self))
 
 
@@ -294,7 +294,7 @@ class Point2(Pointlike):
             return self.__class__((self.x / other.x, self.y / other.y))
         return self.__class__((self.x / other, self.y / other))
 
-    def is_same_as(self, other: Point2, dist=0.001) -> bool:
+    def is_same_as(self, other: Point2, dist: float = 0.001) -> bool:
         return self.distance_to_point2(other) <= dist
 
     def direction_vector(self, other: Point2) -> Point2:
@@ -360,7 +360,7 @@ class Size(Point2):
 
 class Rect(tuple):
     @classmethod
-    def from_proto(cls, data):
+    def from_proto(cls, data) -> Rect:
         """
         :param data:
         """
@@ -401,5 +401,5 @@ class Rect(tuple):
     def center(self) -> Point2:
         return Point2((self.x + self.width / 2, self.y + self.height / 2))
 
-    def offset(self, p):
+    def offset(self, p) -> Rect:
         return self.__class__((self[0] + p[0], self[1] + p[1], self[2], self[3]))

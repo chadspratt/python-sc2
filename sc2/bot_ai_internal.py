@@ -51,7 +51,7 @@ class BotAIInternal(ABC):
     """Base class for bots."""
 
     @final
-    def _initialize_variables(self):
+    def _initialize_variables(self) -> None:
         """Called from main.py internally"""
         self.cache: dict[str, Any] = {}
         # Specific opponent bot ID used in sc2ai ladder games http://sc2ai.net/ and on ai arena https://aiarena.net
@@ -169,7 +169,7 @@ class BotAIInternal(ABC):
         return self.expansion_locations_dict
 
     @final
-    def _find_expansion_locations(self):
+    def _find_expansion_locations(self) -> None:
         """Ran once at the start of the game to calculate expansion locations."""
         # Idea: create a group for every resource, then merge these groups if
         # any resource in a group is closer than a threshold to any resource of another group
@@ -247,7 +247,7 @@ class BotAIInternal(ABC):
                 self._resource_location_to_expansion_position_dict[resource.position] = result
 
     @final
-    def _correct_zerg_supply(self):
+    def _correct_zerg_supply(self) -> None:
         """The client incorrectly rounds zerg supply down instead of up (see
         https://github.com/Blizzard/s2client-proto/issues/123), so self.supply_used
         and friends return the wrong value when there are an odd number of zerglings
@@ -450,7 +450,9 @@ class BotAIInternal(ABC):
         return True
 
     @final
-    def _prepare_start(self, client, player_id, game_info, game_data, realtime: bool = False, base_build: int = -1):
+    def _prepare_start(
+        self, client, player_id: int, game_info, game_data, realtime: bool = False, base_build: int = -1
+    ) -> None:
         """
         Ran until game start to set game and player data.
 
@@ -475,7 +477,7 @@ class BotAIInternal(ABC):
         self._distances_override_functions(self.distance_calculation_method)
 
     @final
-    def _prepare_first_step(self):
+    def _prepare_first_step(self) -> None:
         """First step extra preparations. Must not be called before _prepare_step."""
         if self.townhalls:
             self.game_info.player_start_location = self.townhalls.first.position
@@ -485,7 +487,7 @@ class BotAIInternal(ABC):
         self._time_before_step: float = time.perf_counter()
 
     @final
-    def _prepare_step(self, state, proto_game_info):
+    def _prepare_step(self, state, proto_game_info) -> None:
         """
         :param state:
         :param proto_game_info:
@@ -526,7 +528,7 @@ class BotAIInternal(ABC):
             self.enemy_race = Race(self.all_enemy_units.first.race)
 
     @final
-    def _prepare_units(self):
+    def _prepare_units(self) -> None:
         # Set of enemy units detected by own sensor tower, as blips have less unit information than normal visible units
         self.blips: set[Blip] = set()
         self.all_units: Units = Units([], self)
@@ -652,7 +654,7 @@ class BotAIInternal(ABC):
         return self.state.game_loop
 
     @final
-    async def _advance_steps(self, steps: int):
+    async def _advance_steps(self, steps: int) -> None:
         """Advances the game loop by amount of 'steps'. This function is meant to be used as a debugging and testing tool only.
         If you are using this, please be aware of the consequences, e.g. 'self.units' will be filled with completely new data."""
         await self._after_step()
@@ -665,7 +667,7 @@ class BotAIInternal(ABC):
         await self.issue_events()
 
     @final
-    async def issue_events(self):
+    async def issue_events(self) -> None:
         """This function will be automatically run from main.py and triggers the following functions:
         - on_unit_created
         - on_unit_destroyed
@@ -680,7 +682,7 @@ class BotAIInternal(ABC):
         await self._issue_vision_events()
 
     @final
-    async def _issue_unit_added_events(self):
+    async def _issue_unit_added_events(self) -> None:
         for unit in self.units:
             if unit.tag not in self._units_previous_map and unit.tag not in self._unit_tags_seen_this_game:
                 self._unit_tags_seen_this_game.add(unit.tag)
@@ -697,14 +699,14 @@ class BotAIInternal(ABC):
                     await self.on_unit_type_changed(unit, previous_frame_unit.type_id)
 
     @final
-    async def _issue_upgrade_events(self):
+    async def _issue_upgrade_events(self) -> None:
         difference = self.state.upgrades - self._previous_upgrades
         for upgrade_completed in difference:
             await self.on_upgrade_complete(upgrade_completed)
         self._previous_upgrades = self.state.upgrades
 
     @final
-    async def _issue_building_events(self):
+    async def _issue_building_events(self) -> None:
         for structure in self.structures:
             if structure.tag not in self._structures_previous_map:
                 if structure.build_progress < 1:
@@ -736,7 +738,7 @@ class BotAIInternal(ABC):
                     await self.on_building_construction_complete(structure)
 
     @final
-    async def _issue_vision_events(self):
+    async def _issue_vision_events(self) -> None:
         # Call events for enemy unit entered vision
         for enemy_unit in self.enemy_units:
             if enemy_unit.tag not in self._enemy_units_previous_map:
@@ -754,7 +756,7 @@ class BotAIInternal(ABC):
             await self.on_enemy_unit_left_vision(enemy_structure_tag)
 
     @final
-    async def _issue_unit_dead_events(self):
+    async def _issue_unit_dead_events(self) -> None:
         for unit_tag in self.state.dead_units & set(self._all_units_previous_map):
             await self.on_unit_destroyed(unit_tag)
 
@@ -919,7 +921,7 @@ class BotAIInternal(ABC):
         return (self.distance_math_hypot(p, pos) for p in points)
 
     @final
-    def _distances_override_functions(self, method: int = 0):
+    def _distances_override_functions(self, method: int = 0) -> None:
         """Overrides the internal distance calculation functions at game start in bot_ai.py self._prepare_start() function
         method 0: Use python's math.hypot
         The following methods calculate the distances between all units once:

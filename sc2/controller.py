@@ -9,12 +9,12 @@ from sc2.protocol import Protocol
 
 
 class Controller(Protocol):
-    def __init__(self, ws, process):
+    def __init__(self, ws, process) -> None:
         super().__init__(ws)
         self._process = process
 
     @property
-    def running(self):
+    def running(self) -> bool:
         # pylint: disable=W0212
         return self._process._process is not None
 

@@ -2,11 +2,11 @@ import asyncio
 import sys
 from contextlib import suppress
 
-from aiohttp import ClientWebSocketResponse
 from loguru import logger
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 from sc2.data import Status
+from aiohttp.client_ws import ClientWebSocketResponse
 
 
 class ProtocolError(Exception):
@@ -20,7 +20,7 @@ class ConnectionAlreadyClosedError(ProtocolError):
 
 
 class Protocol:
-    def __init__(self, ws):
+    def __init__(self, ws: ClientWebSocketResponse) -> None:
         """
         A class for communicating with an SCII application.
         :param ws: the websocket (type: aiohttp.ClientWebSocketResponse) used to communicate with a specific SCII app
@@ -80,6 +80,6 @@ class Protocol:
         result = await self._execute(ping=sc_pb.RequestPing())
         return result
 
-    async def quit(self):
+    async def quit(self) -> None:
         with suppress(ConnectionAlreadyClosedError, ConnectionResetError):
             await self._execute(quit=sc_pb.RequestQuit())

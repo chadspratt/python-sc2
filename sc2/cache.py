@@ -29,13 +29,13 @@ class property_cache_once_per_frame(property):  # noqa: N801
     Copied and modified from https://tedboy.github.io/flask/_modules/werkzeug/utils.html#cached_property
     #"""
 
-    def __init__(self, func: Callable[[BotAI], T], name=None):
+    def __init__(self, func: Callable[[BotAI], T], name=None) -> None:
         # pylint: disable=W0231
         self.__name__ = name or func.__name__
         self.__frame__ = f"__frame__{self.__name__}"
         self.func = func
 
-    def __set__(self, obj: BotAI, value: T):
+    def __set__(self, obj: BotAI, value: T) -> None:
         obj.cache[self.__name__] = value
         obj.cache[self.__frame__] = obj.state.game_loop
 

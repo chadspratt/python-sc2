@@ -9,7 +9,7 @@ from sc2.position import Point2
 
 
 class PixelMap:
-    def __init__(self, proto, in_bits: bool = False):
+    def __init__(self, proto, in_bits: bool = False) -> None:
         """
         :param proto:
         :param in_bits:
@@ -48,7 +48,7 @@ class PixelMap:
         assert 0 <= pos[1] < self.height, f"y is {pos[1]}, self.height is {self.height}"
         return int(self.data_numpy[pos[1], pos[0]])
 
-    def __setitem__(self, pos: tuple[int, int], value: int):
+    def __setitem__(self, pos: tuple[int, int], value: int) -> None:
         """Example usage: self._game_info.pathing_grid[Point2((20, 20))] = 255"""
         assert 0 <= pos[0] < self.width, f"x is {pos[0]}, self.width is {self.width}"
         assert 0 <= pos[1] < self.height, f"y is {pos[1]}, self.height is {self.height}"
@@ -104,7 +104,7 @@ class PixelMap:
                 print("#" if self.is_set((x, y)) else " ", end=(" " if wide else ""))
             print("")
 
-    def save_image(self, filename: str | Path):
+    def save_image(self, filename: str | Path) -> None:
         data = [(0, 0, self[x, y]) for y in range(self.height) for x in range(self.width)]
         # pylint: disable=C0415
         from PIL import Image
@@ -113,7 +113,7 @@ class PixelMap:
         im.putdata(data)
         im.save(filename)
 
-    def plot(self):
+    def plot(self) -> None:
         # pylint: disable=C0415
         import matplotlib.pyplot as plt
 

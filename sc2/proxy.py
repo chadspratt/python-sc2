@@ -14,6 +14,7 @@ from s2clientprotocol import sc2api_pb2 as sc_pb
 from sc2.controller import Controller
 from sc2.data import Result, Status
 from sc2.player import BotProcess
+from aiohttp.web_ws import WebSocketResponse
 
 
 class Proxy:
@@ -29,7 +30,7 @@ class Proxy:
         proxyport: int,
         game_time_limit: int = None,
         realtime: bool = False,
-    ):
+    ) -> None:
         self.controller = controller
         self.player = player
         self.port = proxyport
@@ -43,7 +44,7 @@ class Proxy:
         self.player_id: int = None
         self.done = False
 
-    async def parse_request(self, msg):
+    async def parse_request(self, msg) -> None:
         request = sc_pb.Request()
         request.ParseFromString(msg.data)
         if request.HasField("quit"):
@@ -107,7 +108,7 @@ class Proxy:
                 await self.controller._execute(action=sc_pb.RequestAction(actions=act))
         return response
 
-    async def get_result(self):
+    async def get_result(self) -> None:
         try:
             res = await self.controller.ping()
             if res.status in {Status.in_game, Status.in_replay, Status.ended}:
@@ -119,7 +120,7 @@ class Proxy:
         except Exception as e:
             logger.exception(f"Caught unknown exception: {e}")
 
-    async def proxy_handler(self, request):
+    async def proxy_handler(self, request) -> WebSocketResponse:
         bot_ws = web.WebSocketResponse(receive_timeout=30)
         await bot_ws.prepare(request)
         try:
