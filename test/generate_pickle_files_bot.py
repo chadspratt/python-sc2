@@ -9,6 +9,7 @@ import pickle
 from pathlib import Path
 
 from loguru import logger
+
 # pyre-ignore[21]
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
