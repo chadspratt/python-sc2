@@ -781,7 +781,7 @@ class BotAI(BotAIInternal):
         :param structure_type:
         """
         assert isinstance(
-            structure_type, int | UnitTypeId
+            structure_type, (int, UnitTypeId)
         ), f"Needs to be int or UnitTypeId, but was: {type(structure_type)}"
         if isinstance(structure_type, int):
             structure_type_value: int = structure_type

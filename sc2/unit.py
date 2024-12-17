@@ -593,7 +593,7 @@ class Unit:
             )
         # For casting abilities on the ground, like queen creep tumor, ravager bile, HT storm
         if ability_target_type in {Target.Point.value, Target.PointOrUnit.value} and isinstance(
-            target, (Point2 | tuple)
+            target, (Point2, tuple)
         ):
             return (
                 self._bot_object._distance_pos_to_pos(self.position_tuple, target)
