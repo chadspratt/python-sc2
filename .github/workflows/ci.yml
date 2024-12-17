@@ -425,4 +425,4 @@ jobs:
       - name: Publish to pypi
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         continue-on-error: true
-        run: uv publish --token ${{ secrets.pypi_burny_common_token }}
+        run: uv publish --token ${{ secrets.PYPI_PYTHON_SC2_TOKEN }}
