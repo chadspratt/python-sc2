@@ -5,11 +5,6 @@ This script makes sure to run all bots in the examples folder to check if they c
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-# pyre-ignore[6]
-sys.path.append(Path(__file__).parent)
 import asyncio
 from importlib import import_module
 

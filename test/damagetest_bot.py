@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-# pyre-ignore[6]
-sys.path.append(Path(__file__).parent)
 import math
 
 from loguru import logger

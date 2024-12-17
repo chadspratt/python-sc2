@@ -7,13 +7,7 @@ TODO: self.client.query_pathing (RequestQueryPathing)
 """
 
 from __future__ import annotations
-
 import sys
-from pathlib import Path
-
-# pyre-ignore[6]
-sys.path.append(Path(__file__).parent)
-
 
 from loguru import logger
 
