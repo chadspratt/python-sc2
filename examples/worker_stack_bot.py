@@ -15,7 +15,6 @@ Task for the user who wants to enhance this bot:
 
 from __future__ import annotations
 
-
 from loguru import logger
 
 from sc2 import maps
@@ -69,12 +68,11 @@ class WorkerStackBot(BotAI):
             # Quick-access cache mineral tag to mineral Unit
             minerals: dict[int, Unit] = {mineral.tag: mineral for mineral in self.mineral_field}
 
+            worker: Unit
             for worker in self.workers:
                 if not self.townhalls:
                     logger.error("All townhalls died - can't return resources")
                     break
-
-                worker: Unit
                 mineral_tag = self.worker_to_mineral_patch_dict[worker.tag]
                 mineral = minerals.get(mineral_tag)
                 if mineral is None:
@@ -91,6 +89,7 @@ class WorkerStackBot(BotAI):
                     # Move worker in front of the nexus to avoid deceleration until the last moment
                     if worker.distance_to(th) > th.radius + worker.radius + self.townhall_distance_threshold:
                         pos: Point2 = th.position
+                        # pyre-ignore[6]
                         worker.move(pos.towards(worker, th.radius * self.townhall_distance_factor))
                         worker.return_resource(queue=True)
                     else:
@@ -98,6 +97,7 @@ class WorkerStackBot(BotAI):
                         worker.gather(mineral, queue=True)
 
         # Print info every 30 game-seconds
+        # pyre-ignore[16]
         if self.state.game_loop % (22.4 * 30) == 0:
             logger.info(f"{self.time_formatted} Mined a total of {int(self.state.score.collected_minerals)} minerals")
 
