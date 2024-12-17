@@ -1,6 +1,7 @@
 """
 This script shows how to let two custom bots play against each other.
 """
+
 from typing import List
 
 from loguru import logger

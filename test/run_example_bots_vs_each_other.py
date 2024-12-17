@@ -1,6 +1,7 @@
 """
 This script makes sure to run all bots in the examples folder to check if they can launch against each other.
 """
+
 import sys
 from pathlib import Path
 

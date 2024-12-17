@@ -8,8 +8,9 @@ docker build -t test_image -f test/Dockerfile .
 docker run test_image -c "python test/travis_test_script.py test/autotest_bot.py"
 
 Or if you want to run from windows:
-poetry run python test/travis_test_script.py test/autotest_bot.py
+uv run python test/travis_test_script.py test/autotest_bot.py
 """
+
 import subprocess
 import sys
 import time

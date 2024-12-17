@@ -19,6 +19,7 @@ Improvements that could be made:
 - Make marines constantly run if they have a ling/bane very close to them
 - Split marines before engaging
 """
+
 from typing import Union
 
 from loguru import logger

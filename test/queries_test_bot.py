@@ -4,6 +4,7 @@ These query functions are:
 self.can_place (RequestQueryBuildingPlacement)
 TODO: self.client.query_pathing (RequestQueryPathing)
 """
+
 import sys
 from pathlib import Path
 

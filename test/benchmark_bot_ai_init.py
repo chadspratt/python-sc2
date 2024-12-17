@@ -1,5 +1,6 @@
-from test.test_pickled_data import MAPS, build_bot_object_from_pickle_data, load_map_pickle_data
 from typing import Any, List, Tuple
+
+from test.test_pickled_data import MAPS, build_bot_object_from_pickle_data, load_map_pickle_data
 
 
 def _test_run_bot_ai_init_on_all_maps(pickle_data: List[Tuple[Any, Any, Any]]):
@@ -14,4 +15,4 @@ def test_bench_bot_ai_init(benchmark):
 
 
 # Run this file using
-# poetry run pytest test/benchmark_bot_ai_init.py --benchmark-compare --benchmark-min-rounds=5
+# uv run pytest test/benchmark_bot_ai_init.py --benchmark-compare --benchmark-min-rounds=5

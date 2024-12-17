@@ -9,6 +9,7 @@ This script does the following:
 data.json origin:
 https://github.com/BurnySc2/sc2-techtree/tree/develop/data
 """
+
 import json
 import lzma
 import pickle

@@ -1,5 +1,6 @@
-from test.test_pickled_data import MAPS, get_map_specific_bot
 from typing import TYPE_CHECKING, List
+
+from test.test_pickled_data import MAPS, get_map_specific_bot
 
 if TYPE_CHECKING:
     from sc2.bot_ai import BotAI
@@ -16,4 +17,4 @@ def test_bench_prepare_units(benchmark):
 
 
 # Run this file using
-# poetry run pytest test/benchmark_prepare_units.py --benchmark-compare
+# uv run pytest test/benchmark_prepare_units.py --benchmark-compare
