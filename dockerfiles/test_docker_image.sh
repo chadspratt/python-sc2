@@ -39,14 +39,14 @@ docker run -i -d \
   --entrypoint /bin/bash \
   $IMAGE_NAME
 
+# Install requirements
 docker exec -i test_container mkdir -p /root/python-sc2
 docker cp pyproject.toml test_container:/root/python-sc2/
 docker cp uv.lock test_container:/root/python-sc2/
+docker exec -i test_container bash -c "pip install uv && cd python-sc2 && uv sync --no-cache --no-install-project"
+
 docker cp sc2 test_container:/root/python-sc2/sc2
 docker cp test test_container:/root/python-sc2/test
-
-# Install python-sc2, via mount the python-sc2 folder will be available
-docker exec -i test_container bash -c "pip install uv && cd python-sc2 && uv sync --no-cache --no-install-project"
 
 # Run various test bots
 docker exec -i test_container bash -c "cd python-sc2 && uv run python test/travis_test_script.py test/autotest_bot.py"

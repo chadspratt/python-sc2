@@ -275,7 +275,7 @@ jobs:
     # Run and upload coverage report
     # This coverage test does not cover the whole testing range, check /bat_files/rune_code_coverage.bat
     name: Run coverage
-    needs: [run_test_bots, run_example_bots]
+    # needs: [run_test_bots, run_example_bots]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -294,11 +294,13 @@ jobs:
         run: |
           mkdir htmlcov
           docker run -i -d \
-            --mount type=bind,source=$(pwd)/htmlcov,destination=/root/python-sc2/htmlcov \
+            -v $(pwd)/htmlcov:/root/python-sc2/htmlcov \
             --name my_container \
+            --env 'PYTHONPATH=/root/python-sc2/' \
             $IMAGE_NAME
           echo "Install dev requirements because only non dev requirements exist in the docker image at the moment"
-          docker exec -i my_container bash -c "uv sync --frozen --no-cache --no-install-project"
+          docker exec -i test_container bash -c "pip install uv \
+              && cd python-sc2 && uv sync --frozen --no-cache --no-install-project"
 
       - name: Run coverage on tests
         run: docker exec -i my_container bash -c "uv run pytest --cov=./"

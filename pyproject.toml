@@ -4,8 +4,7 @@ version = "7.0.1"
 description = "A StarCraft II API Client for Python 3"
 authors = [{ name = "BurnySc2", email = "gamingburny@gmail.com" }]
 requires-python = ">=3.9, <3.13"
-license = "MIT"
-documentation = "https://burnysc2.github.io/python-sc2/docs/index.html"
+license = { file = "LICENSE" }
 keywords = ["StarCraft", "StarCraft 2", "StarCraft II", "AI", "Bot"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -66,6 +65,10 @@ dev = [
     "toml>=0.10.2",
     "yapf>=0.43.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sc2"]
 
 [project.urls]
 Repository = "https://github.com/Burnysc2/python-sc2"
