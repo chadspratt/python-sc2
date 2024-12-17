@@ -26,7 +26,6 @@ pip install --upgrade burnysc2
 ```
 or directly from develop branch:
 ```
-pip install poetry
 pip install --upgrade --force-reinstall https://github.com/BurnySc2/python-sc2/archive/develop.zip
 ```
 Both commands will use the `sc2` library folder, so you will not be able to have Dentosal's and this fork installed at the same time, unless you use virtual environments.
@@ -186,6 +185,6 @@ Git commit messages use [imperative-style messages](https://stackoverflow.com/a/
 
 To run pre-commit hooks (which run autoformatting and autosort imports) you can run
 ```sh
-poetry run pre-commit install
-poetry run pre-commit run --all-files --hook-stage push
+uv run pre-commit install
+uv run pre-commit run --all-files --hook-stage push
 ```
