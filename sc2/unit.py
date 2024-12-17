@@ -1267,7 +1267,7 @@ class Unit:
     def build(
         self,
         unit: UnitTypeId,
-        position: Point2 | Unit,
+        position: Point2 | Unit | None = None,
         queue: bool = False,
         can_afford_check: bool = False,
     ) -> UnitCommand | bool:
@@ -1275,6 +1275,7 @@ class Unit:
         Usage::
 
             SCV.build(COMMANDCENTER, position)
+            hatchery.build(UnitTypeId.LAIR)
             # Target for refinery, assimilator and extractor needs to be the vespene geysir unit, not its position
             SCV.build(REFINERY, target_vespene_geysir)
 
