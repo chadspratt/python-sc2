@@ -6,6 +6,7 @@ from sc2.ids.upgrade_id import UpgradeId
 # from sc2.ids.buff_id import BuffId
 # from sc2.ids.effect_id import EffectId
 
+
 UPGRADE_RESEARCHED_FROM: dict[UpgradeId, UnitTypeId] = {
     UpgradeId.ADEPTPIERCINGATTACK: UnitTypeId.TWILIGHTCOUNCIL,
     UpgradeId.ANABOLICSYNTHESIS: UnitTypeId.ULTRALISKCAVERN,

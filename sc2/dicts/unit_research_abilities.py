@@ -7,7 +7,9 @@ from sc2.ids.upgrade_id import UpgradeId
 # from sc2.ids.buff_id import BuffId
 # from sc2.ids.effect_id import EffectId
 
-RESEARCH_INFO: dict[UnitTypeId, dict[UpgradeId, dict[str, AbilityId | bool | UnitTypeId | UpgradeId]]] = {
+from typing import Union
+
+RESEARCH_INFO: dict[UnitTypeId, dict[UpgradeId, dict[str, Union[AbilityId, bool, UnitTypeId, UpgradeId]]]] = {
     UnitTypeId.ARMORY: {
         UpgradeId.TERRANSHIPWEAPONSLEVEL1: {"ability": AbilityId.ARMORYRESEARCH_TERRANSHIPWEAPONSLEVEL1},
         UpgradeId.TERRANSHIPWEAPONSLEVEL2: {
