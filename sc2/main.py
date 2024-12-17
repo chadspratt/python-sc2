@@ -341,7 +341,7 @@ async def _host_game(
 ):
     assert players, "Can't create a game without players"
 
-    assert any(isinstance(p, Human | Bot) for p in players)
+    assert any((isinstance(p, (Human, Bot))) for p in players)
 
     async with SC2Process(
         fullscreen=players[0].fullscreen, render=rgb_render_config is not None, sc2_version=sc2_version
@@ -377,7 +377,7 @@ async def _host_game_aiter(
 ):
     assert players, "Can't create a game without players"
 
-    assert any(isinstance(p, Human | Bot) for p in players)
+    assert any(isinstance(p, (Human, Bot)) for p in players)
 
     async with SC2Process() as server:
         while True:
@@ -465,7 +465,7 @@ def run_game(map_settings, players, **kwargs) -> Result | list[Result | None]:
     Returns a single Result enum if the game was against the built-in computer.
     Returns a list of two Result enums if the game was "Human vs Bot" or "Bot vs Bot".
     """
-    if sum(isinstance(p, Human | Bot) for p in players) > 1:
+    if sum(isinstance(p, (Human, Bot)) for p in players) > 1:
         host_only_args = ["save_replay_as", "rgb_render_config", "random_seed", "sc2_version", "disable_fog"]
         join_kwargs = {k: v for k, v in kwargs.items() if k not in host_only_args}
 

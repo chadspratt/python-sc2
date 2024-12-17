@@ -549,7 +549,7 @@ class BotAI(BotAIInternal):
         :param cached_abilities_of_unit:"""
         assert isinstance(unit, Unit), f"{unit} is no Unit object"
         assert isinstance(ability_id, AbilityId), f"{ability_id} is no AbilityId"
-        assert isinstance(target, type(None) | Unit | Point2)
+        assert isinstance(target, (type(None), Unit, Point2))
         # check if unit has enough energy to cast or if ability is on cooldown
         if cached_abilities_of_unit:
             abilities = cached_abilities_of_unit
@@ -646,7 +646,7 @@ class BotAI(BotAIInternal):
             )
             building = building_type.id
 
-        if isinstance(positions, Point2 | tuple):
+        if isinstance(positions, (Point2, tuple)):
             warnings.warn(
                 "The support for querying single entries will be removed soon. Please use either 'await self.can_place_single(building, position)' or 'await (self.can_place(building, [position]))[0]",
                 DeprecationWarning,
@@ -683,7 +683,7 @@ class BotAI(BotAIInternal):
         :param placement_step:
         :param addon_place:"""
 
-        assert isinstance(building, AbilityId | UnitTypeId)
+        assert isinstance(building, (AbilityId, UnitTypeId))
         assert isinstance(near, Point2), f"{near} is no Point2 object"
 
         if isinstance(building, UnitTypeId):
@@ -922,7 +922,7 @@ class BotAI(BotAIInternal):
         :param random_alternative:
         :param placement_step:"""
 
-        assert isinstance(near, Unit | Point2)
+        assert isinstance(near, (Unit, Point2))
         if not self.can_afford(building):
             return False
         p = None
@@ -1199,7 +1199,7 @@ class BotAI(BotAIInternal):
         Caution: terrain height is different from a unit's z-coordinate.
 
         :param pos:"""
-        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.game_info.terrain_height[pos]
 
@@ -1207,7 +1207,7 @@ class BotAI(BotAIInternal):
         """Returns terrain z-height at a position.
 
         :param pos:"""
-        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return -16 + 32 * self.game_info.terrain_height[pos] / 255
 
@@ -1217,7 +1217,7 @@ class BotAI(BotAIInternal):
         Caution: some x and y offset might be required, see ramp code in game_info.py
 
         :param pos:"""
-        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.game_info.placement_grid[pos] == 1
 
@@ -1225,7 +1225,7 @@ class BotAI(BotAIInternal):
         """Returns True if a ground unit can pass through a grid point.
 
         :param pos:"""
-        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.game_info.pathing_grid[pos] == 1
 
@@ -1234,7 +1234,7 @@ class BotAI(BotAIInternal):
 
         :param pos:"""
         # more info: https://github.com/Blizzard/s2client-proto/blob/9906df71d6909511907d8419b33acc1a3bd51ec0/s2clientprotocol/spatial.proto#L19
-        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.state.visibility[pos] == 2
 
@@ -1242,7 +1242,7 @@ class BotAI(BotAIInternal):
         """Returns True if there is creep on the grid point.
 
         :param pos:"""
-        assert isinstance(pos, Point2 | Unit), "pos is not of type Point2 or Unit"
+        assert isinstance(pos, (Point2, Unit)), "pos is not of type Point2 or Unit"
         pos = pos.position.rounded
         return self.state.creep[pos] == 1
 

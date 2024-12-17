@@ -217,7 +217,7 @@ class Client(Protocol):
 
         :param start:
         :param end:"""
-        assert isinstance(start, Point2 | Unit)
+        assert isinstance(start, (Point2, Unit))
         assert isinstance(end, Point2)
         if isinstance(start, Point2):
             path = [query_pb.RequestQueryPathing(start_pos=start.as_Point2D, end_pos=end.as_Point2D)]
@@ -240,7 +240,7 @@ class Client(Protocol):
         assert isinstance(zipped_list, list), f"{type(zipped_list)}"
         assert isinstance(zipped_list[0], list), f"{type(zipped_list[0])}"
         assert len(zipped_list[0]) == 2, f"{len(zipped_list[0])}"
-        assert isinstance(zipped_list[0][0], Point2 | Unit), f"{type(zipped_list[0][0])}"
+        assert isinstance(zipped_list[0][0], (Point2, Unit)), f"{type(zipped_list[0][0])}"
         assert isinstance(zipped_list[0][1], Point2), f"{type(zipped_list[0][1])}"
         if isinstance(zipped_list[0][0], Point2):
             path = (
@@ -378,7 +378,7 @@ class Client(Protocol):
         assert len(unit_spawn_commands[0]) == 4
         assert isinstance(unit_spawn_commands[0][0], UnitTypeId)
         assert unit_spawn_commands[0][1] > 0  # careful, in realtime=True this function may create more units
-        assert isinstance(unit_spawn_commands[0][2], Point2 | Point3)
+        assert isinstance(unit_spawn_commands[0][2], (Point2, Point3))
         assert 1 <= unit_spawn_commands[0][3] <= 2
 
         await self._execute(
@@ -415,7 +415,7 @@ class Client(Protocol):
         """Moves camera to the target position
 
         :param position:"""
-        assert isinstance(position, Unit | Units | Point2 | Point3)
+        assert isinstance(position, (Unit, Units, Point2, Point3))
         if isinstance(position, Units):
             position = position.center
         if isinstance(position, Unit):
@@ -436,7 +436,7 @@ class Client(Protocol):
         """Moves observer camera to the target position. Only works when observing (e.g. watching the replay).
 
         :param position:"""
-        assert isinstance(position, Unit | Units | Point2 | Point3)
+        assert isinstance(position, (Unit, Units, Point2, Point3))
         if isinstance(position, Units):
             position = position.center
         if isinstance(position, Unit):
@@ -453,7 +453,7 @@ class Client(Protocol):
         """Moves camera to the target position using the spatial aciton interface
 
         :param position:"""
-        assert isinstance(position, Point2 | Point3)
+        assert isinstance(position, (Point2, Point3))
         action = sc_pb.Action(
             action_render=spatial_pb.ActionSpatial(
                 camera_move=spatial_pb.ActionSpatialCameraMove(center_minimap=position.as_PointI)
@@ -662,7 +662,7 @@ class Client(Protocol):
             1 <= unit_value <= 3
         ), f"unit_value needs to be between 1 and 3 (1 for energy, 2 for life, 3 for shields), given argument is {unit_value}"
         assert all(tag > 0 for tag in unit_tags), f"Unit tags have invalid value: {unit_tags}"
-        assert isinstance(value, int | float), "Value needs to be of type int or float"
+        assert isinstance(value, (int, float)), "Value needs to be of type int or float"
         assert value >= 0, "Value can't be negative"
         await self._execute(
             debug=sc_pb.RequestDebug(
@@ -755,7 +755,7 @@ class DrawItem:
         if color is None:
             return debug_pb.Color(r=255, g=255, b=255)
         # Need to check if not of type Point3 because Point3 inherits from tuple
-        if isinstance(color, tuple | list) and not isinstance(color, Point3) and len(color) == 3:
+        if isinstance(color, (tuple, list)) and not isinstance(color, Point3) and len(color) == 3:
             return debug_pb.Color(r=color[0], g=color[1], b=color[2])
         # In case color is of type Point3
         r = getattr(color, "r", getattr(color, "x", 255))

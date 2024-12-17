@@ -115,7 +115,7 @@ def test_bot_ai():
     assert bot.vespene_geyser
     assert bot.resources
     assert len(bot.destructables) >= 0
-    assert isinstance(bot.destructables, (list | set | dict))
+    assert isinstance(bot.destructables, (list, set, dict))
     assert len(bot.watchtowers) >= 0
     assert bot.all_units
     assert bot.workers
@@ -443,24 +443,24 @@ def test_game_data():
         with suppress(ValueError):
             assert unit_data.id
         assert unit_data.name
-        assert isinstance(unit_data.creation_ability, (AbilityData | type(None)))
-        assert isinstance(unit_data.footprint_radius, (float | type(None)))
+        assert isinstance(unit_data.creation_ability, (AbilityData, type(None)))
+        assert isinstance(unit_data.footprint_radius, (float, type(None)))
         # TODO Fails on newer python versions
         # assert isinstance(unit_data.attributes, RepeatedScalarContainer)
         assert isinstance(unit_data.has_minerals, bool)
         assert isinstance(unit_data.has_vespene, bool)
         assert isinstance(unit_data.cargo_size, int)
-        assert isinstance(unit_data.tech_requirement, (UnitTypeId | type(None)))
-        assert isinstance(unit_data.tech_alias, (list | type(None)))
-        assert isinstance(unit_data.unit_alias, (UnitTypeId | type(None)))
+        assert isinstance(unit_data.tech_requirement, (UnitTypeId, type(None)))
+        assert isinstance(unit_data.tech_alias, (list, type(None)))
+        assert isinstance(unit_data.unit_alias, (UnitTypeId, type(None)))
         assert isinstance(unit_data.race, Race)
         assert isinstance(unit_data.cost_zerg_corrected, Cost)
-        assert isinstance(unit_data.morph_cost, (Cost | type(None)))
+        assert isinstance(unit_data.morph_cost, (Cost, type(None)))
 
     assert game_data.upgrades
     for upgrade_data in game_data.upgrades.values():
         assert isinstance(upgrade_data.name, str)
-        assert isinstance(upgrade_data.research_ability, (AbilityData | type(None)))
+        assert isinstance(upgrade_data.research_ability, (AbilityData, type(None)))
         assert isinstance(upgrade_data.cost, Cost)
 
 

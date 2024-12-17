@@ -200,7 +200,7 @@ class Point2(Pointlike):
         return Point2((self[0] + p[0], self[1] + p[1]))
 
     def random_on_distance(self, distance) -> Point2:
-        if isinstance(distance, tuple | list):  # interval
+        if isinstance(distance, (tuple, list)):  # interval
             distance = distance[0] + random.random() * (distance[1] - distance[0])
 
         assert distance > 0, "Distance is not greater than 0"
