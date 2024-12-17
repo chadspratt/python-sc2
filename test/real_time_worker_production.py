@@ -5,6 +5,7 @@ This bot tests if on 'realtime=True' any nexus has more than 1 probe in the queu
 import sys
 from pathlib import Path
 
+# pyre-ignore[6]
 sys.path.append(Path(__file__).parent)
 import asyncio
 
@@ -94,6 +95,7 @@ class RealTimeTestBot(BotAI):
         if unit.is_structure:
             unit(AbilityId.RALLY_WORKERS, self.mineral_field.closest_to(unit))
 
+    # pyre-ignore[11]
     async def on_end(self, game_result: Result):
         global on_end_was_called
         on_end_was_called = True

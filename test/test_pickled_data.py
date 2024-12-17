@@ -21,6 +21,7 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Any
 
+# pyre-ignore[21]
 from google.protobuf.internal import api_implementation
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -292,12 +293,14 @@ def test_bot_ai():
 
     def calc_cost(item_id) -> Cost:
         if isinstance(item_id, AbilityId):
+            # pyre-ignore[16]
             return bot.game_data.calculate_ability_cost(item_id)
         elif isinstance(item_id, UpgradeId):
             return bot.game_data.upgrades[item_id.value].cost
         elif isinstance(item_id, UnitTypeId):
             creation_ability: AbilityId = bot.game_data.units[item_id.value].creation_ability.exact_id
             return bot.game_data.calculate_ability_cost(creation_ability)
+        return Cost(0, 0)
 
     def assert_cost(item_id, real_cost: Cost):
         assert calc_cost(item_id) == real_cost, f"Cost of {item_id} should be {real_cost} but is {calc_cost(item_id)}"

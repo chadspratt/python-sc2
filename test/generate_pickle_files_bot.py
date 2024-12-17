@@ -1,3 +1,4 @@
+# pyre-ignore-all-errors[16]
 """
 This "bot" will loop over several available ladder maps and generate the pickle file in the "/test/pickle_data/" subfolder.
 These will then be used to run tests from the test script "test_pickled_data.py"
@@ -8,6 +9,7 @@ import pickle
 from pathlib import Path
 
 from loguru import logger
+# pyre-ignore[21]
 from s2clientprotocol import sc2api_pb2 as sc_pb
 
 from sc2 import maps
@@ -30,14 +32,14 @@ class ExporterBot(BotAI):
     async def on_step(self, iteration):
         pass
 
-    def get_pickle_file_path(self) -> str:
+    def get_pickle_file_path(self) -> Path:
         folder_path = Path(__file__).parent
         subfolder_name = "pickle_data"
         file_name = f"{self.map_name}.xz"
         file_path = folder_path / subfolder_name / file_name
         return file_path
 
-    def get_combat_file_path(self) -> str:
+    def get_combat_file_path(self) -> Path:
         folder_path = Path(__file__).parent
         subfolder_name = "combat_data"
         file_name = f"{self.map_name}.xz"

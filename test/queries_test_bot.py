@@ -1,3 +1,4 @@
+# pyre-ignore-all-errors[16]
 """
 This testbot's purpose is to test the query behavior of the API.
 These query functions are:
@@ -10,6 +11,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+# pyre-ignore[6]
 sys.path.append(Path(__file__).parent)
 
 

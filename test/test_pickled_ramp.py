@@ -38,6 +38,7 @@ class TestClass:
 
     def test_main_base_ramp(self, map_path: Path):
         bot = get_map_specific_bot(map_path)
+        # pyre-ignore[16]
         bot.game_info.map_ramps, bot.game_info.vision_blockers = bot.game_info._find_ramps_and_vision_blockers()
 
         # Test if main ramp works for all spawns
@@ -103,6 +104,7 @@ class TestClass:
         ), f"Too many expansions found: {len(bot.expansion_locations_list)}"
         # On N player maps, it is expected that there are N*X bases because of symmetry, at least for maps designed for 1vs1
         # Those maps in the list have an un-even expansion count
+        # pyre-ignore[16]
         expect_even_expansion_count = 1 if bot.game_info.map_name in ["StargazersAIE", "Stasis LE"] else 0
         assert (
             len(bot.expansion_locations_list) % (len(bot.enemy_start_locations) + 1) == expect_even_expansion_count
@@ -115,6 +117,7 @@ class TestClass:
         for location in bot.enemy_start_locations:
             assert location in set(bot.expansion_locations_list), f"{location}, {bot.expansion_locations_list}"
         # Each expansion is supposed to have at least one geysir and 6-12 minerals
+        # pyre-ignore[16]
         for expansion, resource_positions in bot.expansion_locations_dict.items():
             assert isinstance(expansion, Point2)
             assert isinstance(resource_positions, Units)

@@ -49,16 +49,20 @@ if len(sys.argv) > 1:
         # Break as the bot run was successful
         break
 
+    # pyre-ignore[16]
     if process.returncode is not None:
         # Reformat the output into a list
-        logger.info_output: str = result
+        # pyre-ignore[16]
+        logger.info_output = result
         linebreaks = [
+            # pyre-ignore[16]
             ["\r\n", logger.info_output.count("\r\n")],
             ["\r", logger.info_output.count("\r")],
             ["\n", logger.info_output.count("\n")],
         ]
         most_linebreaks_type = max(linebreaks, key=lambda x: x[1])
         linebreak_type, linebreak_count = most_linebreaks_type
+        # pyre-ignore[16]
         output_as_list = logger.info_output.split(linebreak_type)
         logger.info("Travis test script, bot output:\r\n{}\r\nEnd of bot output".format("\r\n".join(output_as_list)))
 

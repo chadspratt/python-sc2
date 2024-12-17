@@ -1,3 +1,4 @@
+# pyre-ignore-all-errors[16]
 """
 This script makes sure to run all bots in the examples folder to check if they can launch.
 """
@@ -7,6 +8,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+# pyre-ignore[6]
 sys.path.append(Path(__file__).parent)
 import asyncio
 from importlib import import_module
@@ -118,6 +120,7 @@ matches: list[GameMatch] = []
 
 # Run example bots
 for bot_info in bot_infos:
+    # pyre-ignore[11]
     bot_race: Race = bot_info["race"]
     bot_path: str = bot_info["path"]
     bot_class_name: str = bot_info["bot_class_name"]

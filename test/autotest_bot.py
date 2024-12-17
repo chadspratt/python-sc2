@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+# pyre-ignore[6]
 sys.path.append(Path(__file__).parent)
 
 from loguru import logger
@@ -487,6 +488,7 @@ class EmptyBot(BotAI):
             await self.client.debug_kill_unit(self.units)
 
     async def on_step(self, iteration: int):
+        # pyre-ignore[16]
         map_center = self.game_info.map_center
         enemies = self.enemy_units | self.enemy_structures
         if enemies:
