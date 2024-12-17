@@ -275,7 +275,7 @@ jobs:
     # Run and upload coverage report
     # This coverage test does not cover the whole testing range, check /bat_files/rune_code_coverage.bat
     name: Run coverage
-    # needs: [run_test_bots, run_example_bots]
+    needs: [run_test_bots, run_example_bots]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
