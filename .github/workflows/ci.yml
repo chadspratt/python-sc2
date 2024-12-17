@@ -297,6 +297,7 @@ jobs:
             -v $(pwd)/htmlcov:/root/python-sc2/htmlcov \
             --name my_container \
             --env 'PYTHONPATH=/root/python-sc2/' \
+            --entrypoint /bin/bash \
             $IMAGE_NAME
           echo "Install dev requirements because only non dev requirements exist in the docker image at the moment"
           docker exec -i test_container bash -c "pip install uv \
