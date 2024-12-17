@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 
 # pyre-fixme[21]
@@ -49,7 +51,7 @@ class Portconfig:
         return json.dumps({"shared": self.shared, "server": self.server, "players": self.players})
 
     @classmethod
-    def contiguous_ports(cls, guests: int = 1, attempts: int = 40) -> "Portconfig":
+    def contiguous_ports(cls, guests: int = 1, attempts: int = 40) -> Portconfig:
         """Returns a Portconfig with adjacent ports"""
         for _ in range(attempts):
             start = portpicker.pick_unused_port()
@@ -65,6 +67,6 @@ class Portconfig:
         raise portpicker.NoFreePortFoundError()
 
     @classmethod
-    def from_json(cls, json_data: bytearray | bytes | str) -> "Portconfig":
+    def from_json(cls, json_data: bytearray | bytes | str) -> Portconfig:
         data = json.loads(json_data)
         return cls(server_ports=data["server"], player_ports=data["players"])

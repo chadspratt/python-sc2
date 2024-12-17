@@ -20,6 +20,8 @@ Improvements that could be made:
 - Split marines before engaging
 """
 
+from __future__ import annotations
+
 from loguru import logger
 
 from sc2 import maps

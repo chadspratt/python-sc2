@@ -1,4 +1,6 @@
 # pyre-ignore-all-errors[16, 29]
+from __future__ import annotations
+
 import asyncio
 import os
 import platform

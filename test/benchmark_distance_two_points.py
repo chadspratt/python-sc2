@@ -1,4 +1,6 @@
 # pyre-ignore-all-errors[21]
+from __future__ import annotations
+
 import math
 import platform
 import random
