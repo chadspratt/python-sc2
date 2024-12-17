@@ -301,7 +301,7 @@ jobs:
             $IMAGE_NAME
           echo "Install dev requirements because only non dev requirements exist in the docker image at the moment"
           docker exec -i my_container bash -c "pip install uv \
-              && cd python-sc2 && uv sync --frozen --no-cache --no-install-project"
+              && uv sync --frozen --no-cache --no-install-project"
 
       - name: Run coverage on tests
         run: docker exec -i my_container bash -c "uv run pytest --cov=./"
