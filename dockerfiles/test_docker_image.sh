@@ -35,6 +35,7 @@ docker rm -f test_container
 # Start container, override the default entrypoint
 docker run -i -d \
   --name test_container \
+  --entrypoint /bin/bash \
   $IMAGE_NAME
 
 docker exec -i test_container mkdir -p /root/python-sc2
@@ -44,7 +45,7 @@ docker cp sc2 test_container:/root/python-sc2/sc2
 docker cp test test_container:/root/python-sc2/test
 
 # Install python-sc2, via mount the python-sc2 folder will be available
-docker exec -i test_container bash -c "cd /root/python-sc2 && uv sync  --no-cache --no-install-project"
+docker exec -i test_container bash -c "pip install uv && cd python-sc2 && uv sync  --no-cache --no-install-project"
 
 # Run various test bots
 docker exec -i test_container bash -c "cd python-sc2 && uv run python test/travis_test_script.py test/autotest_bot.py"
