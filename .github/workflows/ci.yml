@@ -184,28 +184,28 @@ jobs:
       - name: Run autotest_bot.py
         # Run bot and list resulting files (replay file, stable_id.json)
         run: |
-          docker run -i -d --name my_container $IMAGE_NAME
+          docker run -i -d --name my_container --env 'PYTHONPATH=/root/python-sc2' $IMAGE_NAME
           docker exec -i my_container bash -c "python test/travis_test_script.py test/autotest_bot.py"
           docker exec -i my_container bash -c "tree"
           docker rm -f my_container
 
       - name: Run upgradestest_bot.py
         run: |
-          docker run -i -d --name my_container $IMAGE_NAME
+          docker run -i -d --name my_container --env 'PYTHONPATH=/root/python-sc2' $IMAGE_NAME
           docker exec -i my_container bash -c "python test/travis_test_script.py test/upgradestest_bot.py"
           docker exec -i my_container bash -c "tree"
           docker rm -f my_container
 
       - name: Run damagetest_bot.py
         run: |
-          docker run -i -d --name my_container $IMAGE_NAME
+          docker run -i -d --name my_container --env 'PYTHONPATH=/root/python-sc2' $IMAGE_NAME
           docker exec -i my_container bash -c "python test/travis_test_script.py test/damagetest_bot.py"
           docker exec -i my_container bash -c "tree"
           docker rm -f my_container
 
       - name: Run queries_test_bot.py
         run: |
-          docker run -i -d --name my_container $IMAGE_NAME
+          docker run -i -d --name my_container --env 'PYTHONPATH=/root/python-sc2' $IMAGE_NAME
           docker exec -i my_container bash -c "python test/travis_test_script.py test/queries_test_bot.py"
           docker exec -i my_container bash -c "tree"
           docker rm -f my_container
@@ -234,7 +234,7 @@ jobs:
 
       - name: Run example bots vs computer
         run: |
-          docker run -i -d --name my_container $IMAGE_NAME
+          docker run -i -d --name my_container --env 'PYTHONPATH=/root/python-sc2' $IMAGE_NAME
           docker exec -i my_container bash -c "python test/run_example_bots_vs_computer.py"
           docker exec -i my_container bash -c "tree"
           docker rm -f my_container
@@ -266,7 +266,7 @@ jobs:
   #
   #    - name: Run example bots vs each other
   #      run: |
-  #        docker run -i -d --name my_container $IMAGE_NAME
+  #        docker run -i -d --name my_container --env 'PYTHONPATH=/root/python-sc2' $IMAGE_NAME
   #        docker exec -i my_container bash -c "python test/run_example_bots_vs_each_other.py"
   #        docker exec -i my_container bash -c "tree"
   #        docker rm -f my_container
@@ -294,11 +294,14 @@ jobs:
         run: |
           mkdir htmlcov
           docker run -i -d \
-            --mount type=bind,source=$(pwd)/htmlcov,destination=/root/python-sc2/htmlcov \
+            -v $(pwd)/htmlcov:/root/python-sc2/htmlcov \
             --name my_container \
+            --env 'PYTHONPATH=/root/python-sc2/' \
+            --entrypoint /bin/bash \
             $IMAGE_NAME
           echo "Install dev requirements because only non dev requirements exist in the docker image at the moment"
-          docker exec -i my_container bash -c "uv sync --frozen --no-cache --no-install-project"
+          docker exec -i my_container bash -c "pip install uv \
+              && uv sync --frozen --no-cache --no-install-project"
 
       - name: Run coverage on tests
         run: docker exec -i my_container bash -c "uv run pytest --cov=./"

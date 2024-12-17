@@ -103,6 +103,7 @@ jobs:
           echo "Start container, override the default entrypoint"
           docker run -i -d \
             --name test_container \
+            --env 'PYTHONPATH=/root/python-sc2/' \
             --entrypoint /bin/bash \
             $IMAGE_NAME-v$VERSION_NUMBER-squashed
           echo "Install python-sc2"
