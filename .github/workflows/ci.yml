@@ -45,18 +45,6 @@ jobs:
       - name: Install uv
         run: pip install uv
 
-      - name: Cache pre-commit
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pre-commit
-          key: ${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-uv-${{ hashFiles('.pre-commit.config.yaml') }}
-
-      - name: Cache .venv
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: ${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-uv-${{ hashFiles('uv.lock') }}
-
       - name: Install dependencies
         run: |
           uv sync --frozen --no-cache --no-install-project
@@ -80,12 +68,6 @@ jobs:
 
       - name: Install uv
         run: pip install uv
-
-      - name: Cache .venv
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: ${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-uv-${{ hashFiles('uv.lock') }}
 
       - name: Install dependencies
         run: |
@@ -140,13 +122,6 @@ jobs:
 
       - name: Install uv
         run: pip install uv
-
-      - name: Cache .venv
-        if: matrix.os != 'windows-latest'
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: ${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-uv-${{ hashFiles('uv.lock') }}
 
       - name: Install dependencies
         run: uv sync --frozen --no-cache --no-install-project
@@ -378,12 +353,6 @@ jobs:
       - name: Install uv
         run: pip install uv
 
-      - name: Cache .venv
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: ${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-uv-${{ hashFiles('uv.lock') }}
-
       - name: Install dependencies
         run: uv sync --frozen --no-cache --no-install-project
 
@@ -406,13 +375,6 @@ jobs:
 
       - name: Install uv
         run: pip install uv
-
-      - name: Cache .venv
-        if: matrix.os != 'windows-latest'
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: ${{ matrix.os }}-${{ steps.setup-python.outputs.python-version }}-uv-${{ hashFiles('uv.lock') }}
 
       - name: Install dependencies
         run: uv sync --frozen --no-cache --no-install-project
