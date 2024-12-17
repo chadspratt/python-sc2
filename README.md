@@ -29,7 +29,7 @@ or directly from develop branch:
 pip install poetry
 pip install --upgrade --force-reinstall https://github.com/BurnySc2/python-sc2/archive/develop.zip
 ```
-Both commands will use the `sc2` library folder, so you will not be able to have Dentosal's and this fork installed at the same time, unless you use virtual environments or poetry.
+Both commands will use the `sc2` library folder, so you will not be able to have Dentosal's and this fork installed at the same time, unless you use virtual environments.
 
 ## StarCraft II
 You'll need a StarCraft II executable. If you are running Windows or macOS, just install SC2 from [blizzard app](https://starcraft2.com/).
