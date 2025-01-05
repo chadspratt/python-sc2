@@ -388,10 +388,8 @@ jobs:
           cd docs_generate
           uv run sphinx-build -a -E -b html . ../docs
 
-      - name: Remove files unrelated to docs
-        run: |
-          rm -rf data dockerfiles docs_generate examples sc2 test
-          rm uv.lock
+      - name: Debug-list all generated files
+        run: sudo apt-get install tree && tree
 
       - name: Publish to Github Pages
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
