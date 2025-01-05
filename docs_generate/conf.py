@@ -31,6 +31,11 @@ extensions = [
     "sphinx_autodoc_typehints",
 ]
 
+# autodoc_typehints options https://github.com/agronholm/sphinx-autodoc-typehints#options
+always_document_param_types = True
+typehints_use_signature = True
+typehints_use_signature_return = True
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
