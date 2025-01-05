@@ -395,12 +395,12 @@ jobs:
 
       - name: Publish to Github Pages
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BASE_BRANCH: develop # The branch the action should deploy from.
           BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: . # The folder the action should deploy.
+          FOLDER: docs # The folder the action should deploy.
 
   release_to_pypi:
     name: Pypi package release
