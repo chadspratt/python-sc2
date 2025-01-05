@@ -29,6 +29,8 @@ author = "tweakimp, BurnySc2"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx_autodoc_typehints",
+    # https://www.sphinx-doc.org/en/master/usage/extensions/viewcode.html
+    "sphinx.ext.viewcode",
 ]
 
 # autodoc_typehints options https://github.com/agronholm/sphinx-autodoc-typehints#options
