@@ -1,3 +1,4 @@
+# pyre-ignore-all-errors[21]
 import random
 
 import numpy as np
@@ -124,8 +125,7 @@ amount = 200
 min_value = 0
 max_value = 300
 points = np.array(
-    [np.array([random.uniform(min_value, max_value),
-               random.uniform(min_value, max_value)]) for _ in range(amount)]
+    [np.array([random.uniform(min_value, max_value), random.uniform(min_value, max_value)]) for _ in range(amount)]
 )
 
 
@@ -245,4 +245,4 @@ def test_distance_matrix_scipy_pdist_squared(benchmark):
 
 
 # Run this file using
-# poetry run pytest test/test_benchmark_distances_cdist.py --benchmark-compare
+# uv run pytest test/test_benchmark_distances_cdist.py --benchmark-compare
