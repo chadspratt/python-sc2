@@ -131,7 +131,7 @@ class Units(list):
         :param n:
         """
         if n >= self.amount:
-            return self
+            return self.subgroup([u for u in self])
         return self.subgroup(self[:n])
 
     @property
@@ -147,7 +147,7 @@ class Units(list):
         if n < 1:
             return Units([], self._bot_object)
         if n >= self.amount:
-            return self
+            return self.subgroup([u for u in self])
         return self.subgroup(random.sample(self, n))
 
     def in_attack_range_of(self, unit: Unit, bonus_distance: float = 0) -> Units:
@@ -272,7 +272,7 @@ class Units(list):
         :param position:
         """
         if not self:
-            return self
+            return self.subgroup([])
         if isinstance(position, Unit):
             distance_squared = distance**2
             return self.subgroup(
@@ -298,7 +298,7 @@ class Units(list):
         :param position:
         """
         if not self:
-            return self
+            return self.subgroup([])
         if isinstance(position, Unit):
             distance_squared = distance**2
             return self.subgroup(
@@ -327,7 +327,7 @@ class Units(list):
         :param distance2:
         """
         if not self:
-            return self
+            return self.subgroup([])
         if isinstance(position, Unit):
             distance1_squared = distance1**2
             distance2_squared = distance2**2
@@ -356,7 +356,7 @@ class Units(list):
         :param n:
         """
         if not self:
-            return self
+            return self.subgroup([])
         return self.subgroup(self._list_sorted_by_distance_to(position)[:n])
 
     def furthest_n_units(self, position: Unit | Point2, n: int) -> Units:
@@ -374,7 +374,7 @@ class Units(list):
         :param n:
         """
         if not self:
-            return self
+            return self.subgroup([])
         return self.subgroup(self._list_sorted_by_distance_to(position)[-n:])
 
     def in_distance_of_group(self, other_units: Units, distance: float) -> Units:
@@ -394,14 +394,14 @@ class Units(list):
         assert other_units, "Other units object is empty"
         # Return self because there are no enemies
         if not self:
-            return self
+            return self.subgroup([])
         distance_squared = distance**2
         if len(self) == 1:
             if any(
                 self._bot_object._distance_squared_unit_to_unit(self[0], target) < distance_squared
                 for target in other_units
             ):
-                return self
+                return self.subgroup([self[0]])
             return self.subgroup([])
 
         return self.subgroup(
