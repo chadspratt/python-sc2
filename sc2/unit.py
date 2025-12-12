@@ -874,7 +874,7 @@ class Unit:
     @property
     def is_ready(self) -> bool:
         """Checks if the unit is completed."""
-        return self.build_progress == 1
+        return self.build_progress == 1 or self.is_cloaked
 
     @property
     def cloak(self) -> CloakState:
