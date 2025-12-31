@@ -67,7 +67,10 @@ dev = [
 
 [tool.setuptools]
 license-files = []
-package-dir = { sc2 = "sc2" }
+package-dir = { sc2 = "sc2", s2clientprotocol = "s2clientprotocol" }
+
+[tool.setuptools.package-data]
+sc2 = ["py.typed", "*.pyi"]
 
 [build-system]
 # https://packaging.python.org/en/latest/tutorials/packaging-projects/#choosing-a-build-backend
