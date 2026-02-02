@@ -9,15 +9,13 @@ import sys
 from contextlib import suppress
 from dataclasses import dataclass
 from io import BytesIO
+from loguru import logger
 from pathlib import Path
 from typing import Any
 
 import mpyq
 import portpicker
 from aiohttp import ClientSession, ClientWebSocketResponse
-from loguru import logger
-
-from s2clientprotocol import sc2api_pb2 as sc_pb
 from sc2.bot_ai import BotAI
 from sc2.client import Client
 from sc2.controller import Controller
@@ -30,6 +28,8 @@ from sc2.portconfig import Portconfig
 from sc2.protocol import ConnectionAlreadyClosedError, ProtocolError
 from sc2.proxy import Proxy
 from sc2.sc2process import KillSwitch, SC2Process
+
+from s2clientprotocol import sc2api_pb2 as sc_pb
 
 # Set the global logging level
 logger.remove()
@@ -363,9 +363,9 @@ async def _host_game(
             client.raw_affects_selection = players[0].ai.raw_affects_selection
 
         result = await _play_game(players[0], client, realtime, portconfig, game_time_limit, rgb_render_config)
-        if client.save_replay_path is not None:
-            await client.save_replay(client.save_replay_path)
         try:
+            if client.save_replay_path is not None:
+                await client.save_replay(client.save_replay_path)
             await client.leave()
         except ConnectionAlreadyClosedError:
             logger.error("Connection was closed before the game ended")
