@@ -105,7 +105,13 @@ async def _play_game_human(client, player_id, realtime, game_time_limit):
 
 
 async def _play_game_ai(
-    client: Client, player_id: int, ai: BotAI, realtime: bool, game_time_limit: int | None
+    client: Client,
+    player_id: int,
+    ai: BotAI,
+    realtime: bool,
+    game_time_limit: int | None,
+    post_init_fn: Any | None = None,
+    post_init_delay: int = 0,
 ) -> Result:
     gs: GameState | None = None
 
@@ -159,12 +165,21 @@ async def _play_game_ai(
         except Exception as e:
             logger.exception(f"Caught unknown exception: {e}")
             raise
+        if not client.in_game:
+            # Bot resigned during on_step; skip _after_step to avoid
+            # ProtocolError from sending actions/debug to an ended game.
+            return
         await ai._after_step()
         logger.debug("Running AI step: done")
 
     # Only used in realtime=True
     previous_state_observation = None
     for iteration in range(10**10):
+        # Run post-init callback (e.g. replay state reconstruction) after N iterations
+        if post_init_fn is not None and iteration == post_init_delay:
+            await post_init_fn()
+            post_init_fn = None
+
         if realtime and gs:
             # On realtime=True, might get an error here: sc2.protocol.ProtocolError: ['Not in a game']
             with suppress(ProtocolError):
