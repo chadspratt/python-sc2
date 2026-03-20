@@ -110,8 +110,6 @@ async def _play_game_ai(
     ai: BotAI,
     realtime: bool,
     game_time_limit: int | None,
-    post_init_fn: Any | None = None,
-    post_init_delay: int = 0,
 ) -> Result:
     gs: GameState | None = None
 
@@ -175,11 +173,6 @@ async def _play_game_ai(
     # Only used in realtime=True
     previous_state_observation = None
     for iteration in range(10**10):
-        # Run post-init callback (e.g. replay state reconstruction) after N iterations
-        if post_init_fn is not None and iteration == post_init_delay:
-            await post_init_fn()
-            post_init_fn = None
-
         if realtime and gs:
             # On realtime=True, might get an error here: sc2.protocol.ProtocolError: ['Not in a game']
             with suppress(ProtocolError):
