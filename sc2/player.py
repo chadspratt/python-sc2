@@ -4,9 +4,10 @@ from __future__ import annotations
 from abc import ABC
 from pathlib import Path
 
-from s2clientprotocol import sc2api_pb2
 from sc2.bot_ai import BotAI
 from sc2.data import AIBuild, Difficulty, PlayerType, Race
+
+from s2clientprotocol import sc2api_pb2
 
 
 class AbstractPlayer(ABC):
@@ -197,3 +198,76 @@ class BotProcess(AbstractPlayer):
         if realtime:
             cmd_line.extend([self.realtime_arg])
         return cmd_line
+
+
+class DockerBotProcess(BotProcess):
+    """A BotProcess that runs the opponent bot inside a Docker container.
+
+    Both SC2 instances run on the host; the container only handles bot logic.
+    The container connects to the host's Proxy WebSocket via host.docker.internal.
+    Works out of the box on Docker Desktop (Windows/macOS). On Linux Docker Engine,
+    the Proxy may need to bind to 0.0.0.0 instead of 127.0.0.1.
+
+    :param bot_dir: Host path to the bot directory (mounted at /root/bot_dir)
+    :param race: Bot's race
+    :param name: Bot's name
+    :param image: Docker image with Python and bot runtime dependencies
+    :param entrypoint: Command to run inside container (default: python /root/bot_dir/run.py)
+    :param extra_volumes: Additional volume mounts (Docker -v syntax)
+    :param extra_docker_args: Additional docker run arguments
+    :param stdout: File path to redirect container stdout to
+    """
+
+    def __init__(
+        self,
+        bot_dir: str | Path,
+        race: Race,
+        name: str | None = None,
+        image: str = "ghcr.io/astral-sh/uv:python3.12-bookworm-slim",
+        entrypoint: list[str] | None = None,
+        extra_volumes: list[str] | None = None,
+        extra_docker_args: list[str] | None = None,
+        stdout: str | None = None,
+    ) -> None:
+        bot_dir = Path(bot_dir).resolve()
+        super().__init__(
+            path=bot_dir,
+            launch_list=[],
+            race=race,
+            name=name,
+            stdout=stdout,
+        )
+        self.bot_dir = bot_dir
+        self.image = image
+        self.entrypoint = entrypoint or ["python", "/root/bot_dir/run.py"]
+        self.extra_volumes = extra_volumes or []
+        self.extra_docker_args = extra_docker_args or []
+
+    def cmd_line(
+        self, sc2port: int | str, matchport: int | str | None, hostaddress: str, realtime: bool = False
+    ) -> list[str]:
+        # Remap hostaddress to host.docker.internal for container-to-host networking
+        container_host = "host.docker.internal"
+        cmd = [
+            "docker", "run", "--rm",
+            "--add-host=host.docker.internal:host-gateway",
+            "-w", "/root/bot_dir",
+            "-v", f"{self.bot_dir}:/root/bot_dir",
+        ]
+        for vol in self.extra_volumes:
+            cmd.extend(["-v", vol])
+        cmd.extend(self.extra_docker_args)
+        cmd.append(self.image)
+        cmd.extend(self.entrypoint)
+        cmd.extend([self.sc2port_arg, str(sc2port)])
+        cmd.extend([self.hostaddress_arg, container_host])
+        if matchport is not None:
+            cmd.extend([self.match_arg, str(matchport)])
+        if realtime:
+            cmd.append(self.realtime_arg)
+        return cmd
+
+    def __repr__(self) -> str:
+        if self.name is not None:
+            return f"DockerBot {self.name}({self.race.name} in {self.image})"
+        return f"DockerBot({self.race.name} in {self.image})"
