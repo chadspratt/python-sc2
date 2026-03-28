@@ -212,7 +212,8 @@ class DockerBotProcess(BotProcess):
     :param race: Bot's race
     :param name: Bot's name
     :param image: Docker image with Python and bot runtime dependencies
-    :param entrypoint: Command to run inside container (default: python /root/bot_dir/run.py)
+    :param bot_command: Command to run the bot (default: ["python", "/root/bot_dir/run.py"])
+    :param setup_command: Optional bash commands to run before the bot (e.g. pip install)
     :param extra_volumes: Additional volume mounts (Docker -v syntax)
     :param extra_docker_args: Additional docker run arguments
     :param stdout: File path to redirect container stdout to
@@ -224,7 +225,8 @@ class DockerBotProcess(BotProcess):
         race: Race,
         name: str | None = None,
         image: str = "ghcr.io/astral-sh/uv:python3.12-bookworm-slim",
-        entrypoint: list[str] | None = None,
+        bot_command: list[str] | None = None,
+        setup_command: str | None = None,
         extra_volumes: list[str] | None = None,
         extra_docker_args: list[str] | None = None,
         stdout: str | None = None,
@@ -239,32 +241,44 @@ class DockerBotProcess(BotProcess):
         )
         self.bot_dir = bot_dir
         self.image = image
-        self.entrypoint = entrypoint or ["python", "/root/bot_dir/run.py"]
+        self.bot_command = bot_command or ["python", "/root/bot_dir/run.py"]
+        self.setup_command = setup_command
         self.extra_volumes = extra_volumes or []
         self.extra_docker_args = extra_docker_args or []
 
     def cmd_line(
         self, sc2port: int | str, matchport: int | str | None, hostaddress: str, realtime: bool = False
     ) -> list[str]:
-        # Remap hostaddress to host.docker.internal for container-to-host networking
         container_host = "host.docker.internal"
+
+        # Build the bot run command with game args
+        bot_parts = list(self.bot_command)
+        bot_parts.extend([self.sc2port_arg, str(sc2port)])
+        bot_parts.extend([self.hostaddress_arg, container_host])
+        if matchport is not None:
+            bot_parts.extend([self.match_arg, str(matchport)])
+        if realtime:
+            bot_parts.append(self.realtime_arg)
+
+        # Combine setup + bot command into a single bash -c script
+        bot_cmd_str = " ".join(bot_parts)
+        if self.setup_command:
+            script = f"{self.setup_command} && {bot_cmd_str}"
+        else:
+            script = bot_cmd_str
+
         cmd = [
             "docker", "run", "--rm",
             "--add-host=host.docker.internal:host-gateway",
             "-w", "/root/bot_dir",
             "-v", f"{self.bot_dir}:/root/bot_dir",
+            "--entrypoint", "bash",
         ]
         for vol in self.extra_volumes:
             cmd.extend(["-v", vol])
         cmd.extend(self.extra_docker_args)
         cmd.append(self.image)
-        cmd.extend(self.entrypoint)
-        cmd.extend([self.sc2port_arg, str(sc2port)])
-        cmd.extend([self.hostaddress_arg, container_host])
-        if matchport is not None:
-            cmd.extend([self.match_arg, str(matchport)])
-        if realtime:
-            cmd.append(self.realtime_arg)
+        cmd.extend(["-c", script])
         return cmd
 
     def __repr__(self) -> str:

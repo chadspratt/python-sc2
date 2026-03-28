@@ -609,12 +609,24 @@ async def run_match(controllers: list[Controller], match: GameMatch, close_ws: b
         else:
             portconfig = Portconfig()
 
+    # Collect portconfig ports to avoid conflicts when picking proxy ports
+    reserved_ports = set()
+    if portconfig is not None:
+        reserved_ports.update(portconfig.server)
+        for player_ports in portconfig.players:
+            reserved_ports.update(player_ports)
+        if startport is not None:
+            reserved_ports.add(startport)
+            reserved_ports.add(startport + 1)
+
     proxies = []
     coros = []
     players_that_need_sc2 = filter(lambda lambda_player: lambda_player.needs_sc2, match.players)
     for i, player in enumerate(players_that_need_sc2):
         if isinstance(player, BotProcess):
             pport = portpicker.pick_unused_port()
+            while pport in reserved_ports:
+                pport = portpicker.pick_unused_port()
             p = Proxy(controllers[i], player, pport, match.game_time_limit, match.realtime)
             proxies.append(p)
             coros.append(p.play_with_proxy(startport))
